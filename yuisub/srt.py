@@ -55,44 +55,18 @@ class WhisperModel:
         segments: List[Segment] = [Segment(**seg) for seg in result["segments"]]
         return segments
 
-    def gen_srt(
-        self,
-        audio: Union[str, np.ndarray, torch.Tensor],
-        verbose: Optional[bool] = None,
-        temperature: Union[float, Tuple[float, ...]] = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
-        compression_ratio_threshold: Optional[float] = 2.4,
-        logprob_threshold: Optional[float] = -1.0,
-        no_speech_threshold: Optional[float] = 0.6,
-        condition_on_previous_text: bool = True,
-        initial_prompt: Optional[str] = None,
-        word_timestamps: bool = False,
-        prepend_punctuations: str = "\"'“¿([{-",
-        append_punctuations: str = "\"'.。,，!！?？:：”)]}、",
-    ) -> str:
-        segs = self.transcribe(
-            audio=audio,
-            verbose=verbose,
-            temperature=temperature,
-            compression_ratio_threshold=compression_ratio_threshold,
-            logprob_threshold=logprob_threshold,
-            no_speech_threshold=no_speech_threshold,
-            condition_on_previous_text=condition_on_previous_text,
-            initial_prompt=initial_prompt,
-            word_timestamps=word_timestamps,
-            prepend_punctuations=prepend_punctuations,
-            append_punctuations=append_punctuations,
-        )
+    @staticmethod
+    def format_time(seconds: float) -> str:
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        milliseconds = (seconds - int(seconds)) * 1000
+        return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d},{int(milliseconds):03d}"
 
-        def format_time(seconds: float) -> str:
-            minutes, seconds = divmod(seconds, 60)
-            hours, minutes = divmod(minutes, 60)
-            milliseconds = (seconds - int(seconds)) * 1000
-            return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d},{int(milliseconds):03d}"
-
+    def gen_srt(self, segs: List[Segment]) -> str:
         line_out: str = ""
         for s in segs:
-            start_time = format_time(s.start)
-            end_time = format_time(s.end)
+            start_time = self.format_time(s.start)
+            end_time = self.format_time(s.end)
             text = s.text
             segment_id = s.id + 1
             line_out += f"{segment_id}\n{start_time} --> {end_time}\n{text.lstrip()}\n\n"
