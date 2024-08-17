@@ -32,7 +32,7 @@ class WhisperModel:
     def transcribe(
         self,
         audio: Union[str, np.ndarray, torch.Tensor],
-        verbose: Optional[bool] = None,
+        verbose: Optional[bool] = True,
         temperature: Union[float, Tuple[float, ...]] = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
         compression_ratio_threshold: Optional[float] = 2.4,
         logprob_threshold: Optional[float] = -1.0,
