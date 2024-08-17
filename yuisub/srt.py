@@ -38,7 +38,7 @@ class WhisperModel:
         word_timestamps: bool = False,
         prepend_punctuations: str = "\"'“¿([{-",
         append_punctuations: str = "\"'.。,，!！?？:：”)]}、",
-    ) -> List[Segment]:
+    ) -> Tuple[str, List[Segment]]:
         result = self.model.transcribe(
             audio=audio,
             verbose=verbose,
@@ -53,7 +53,7 @@ class WhisperModel:
             append_punctuations=append_punctuations,
         )
         segments: List[Segment] = [Segment(**seg) for seg in result["segments"]]
-        return segments
+        return result["text"], segments
 
     @staticmethod
     def format_time(seconds: float) -> str:

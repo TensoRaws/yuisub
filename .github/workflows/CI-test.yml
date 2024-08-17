@@ -1,5 +1,8 @@
 name: CI-test
 
+env:
+  GITHUB_ACTIONS: true
+
 on:
   push:
     branches: ["main"]
@@ -51,6 +54,7 @@ jobs:
           make test
 
       - name: Codecov
+        if: matrix.os-version == 'ubuntu-20.04'
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
