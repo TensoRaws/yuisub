@@ -2,7 +2,7 @@
 
 .PHONY: test
 test:
-	poetry run pytest
+	poetry run pytest --cov=yuisub --cov-report=xml --cov-report=html
 
 .PHONY: lint
 lint:
