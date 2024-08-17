@@ -40,3 +40,4 @@ repos:
           - types-certifi
           - pytest
           - pydantic
+          - tenacity

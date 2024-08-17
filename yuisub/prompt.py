@@ -27,7 +27,3 @@ EXAMPLE JSON OUTPUT:
     "zh": "不要停下来啊！"
 }
 """
-
-
-# def bangumi(url: str) -> str:
-#     return f"""
