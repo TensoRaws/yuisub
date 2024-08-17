@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 import pytest
@@ -15,7 +16,7 @@ jp = JP(
 def test_llm() -> None:
     t = Translator(model="deepseek-chat", api_key=util.API_KEY, base_url="https://api.deepseek.com")
     print(t.system_prompt)
-    res = t.ask(str(jp))
+    res = asyncio.run(t.ask(jp))
     print(res.zh)
 
 
@@ -28,5 +29,5 @@ def test_llm_bangumi() -> None:
         bangumi_url="https://bangumi.tv/subject/424883/",
     )
     print(t.system_prompt)
-    res = t.ask(str(jp))
+    res = asyncio.run(t.ask(jp))
     print(res.zh)
