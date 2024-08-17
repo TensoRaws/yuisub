@@ -39,3 +39,4 @@ repos:
           - types-requests
           - types-certifi
           - pytest
+          - pydantic
