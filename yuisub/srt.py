@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import whisper
 from pydantic import BaseModel
+from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.llm import Translator
 from yuisub.prompt import JP
@@ -77,6 +78,7 @@ class WhisperModel:
             line_out += f"{segment_id}\n{start_time} --> {end_time}\n{text.lstrip()}\n\n"
         return line_out
 
+    @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
     def gen_srt_bilingual(
         self, segs: List[Segment], model: str, api_key: str, base_url: str, bangumi_url: str | None = None
     ) -> Tuple[str, str]:

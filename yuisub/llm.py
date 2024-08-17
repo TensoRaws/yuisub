@@ -2,7 +2,6 @@ import json
 import random
 
 from openai import AsyncOpenAI
-from tenacity import retry, stop_after_attempt, stop_after_delay, wait_random
 
 from yuisub.prompt import JP, ZH, anime_prompt
 
@@ -16,11 +15,14 @@ class Translator:
         )
         self.system_prompt = anime_prompt(bangumi_url=bangumi_url)
 
-    @retry(wait=wait_random(min=3, max=5), stop=stop_after_delay(60) | stop_after_attempt(60))
     async def ask(self, question: JP) -> ZH:
         # blank question
         if question.jp == "":
             return ZH(zh="")
+
+        # too long question, return directly
+        if len(question.jp) > 100:
+            return ZH(zh=question.jp)
 
         messages = [
             {"role": "system", "content": self.system_prompt},
@@ -34,7 +36,9 @@ class Translator:
             content = json.loads(response.choices[0].message.content)
             zh = ZH(**content)
         except Exception as e:
-            print(f"Error: {e}, try to use another prompt...")
+            print(
+                f"Error: {e}, try to use another prompt... Question: {question.jp}, Background: {question.background}"
+            )
             try:
                 system_prompt = generate_random_str() + "\n" + self.system_prompt
 
@@ -48,8 +52,8 @@ class Translator:
                 content = json.loads(response.choices[0].message.content)
                 zh = ZH(**content)
             except Exception as e:
-                print(f"Error: {e}, retrying...")
-                raise e
+                print(f"Error: {e}, retrying... Question: {question.jp}, Background: {question.background}")
+                return ZH(zh=question.jp)
 
         return zh
 

@@ -41,6 +41,24 @@ def test_llm_bangumi() -> None:
     print(res.zh)
 
 
+@pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
+def test_llm_bangumi_2() -> None:
+    t = Translator(
+        model="deepseek-chat",
+        api_key=util.API_KEY,
+        base_url="https://api.deepseek.com",
+        bangumi_url="https://bangumi.tv/subject/424883/",
+    )
+    print(t.system_prompt)
+    jp_s = JP(
+        jp="♪ 星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と",
+        background="忍者みたいな奴だな ♪ 星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と 第1話 玄関",
+    )
+
+    res = asyncio.run(t.ask(jp_s))
+    print(res.zh)
+
+
 def test_random_prompt() -> None:
     s1 = generate_random_str()
     s2 = generate_random_str()

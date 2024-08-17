@@ -5,7 +5,7 @@ from yuisub import WhisperModel
 
 
 def main() -> None:
-    model = WhisperModel(name="large", device=util.DEVICE)
+    model = WhisperModel(name="large-v2", device=util.DEVICE)
 
     text, segs = model.transcribe(audio=str(util.projectPATH / "assets" / "Roshidere07.mp3"))
 
