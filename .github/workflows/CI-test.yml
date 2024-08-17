@@ -41,10 +41,10 @@ jobs:
         id: setup-ffmpeg
         with:
           ffmpeg-version: release
-          linking-type: static
 
       - name: Test
         run: |
+          pip install numpy==1.26.4
           pip install pre-commit pytest mypy ruff types-requests pytest-cov coverage pydantic openai openai-whisper
 
           make lint
