@@ -78,12 +78,11 @@ class WhisperModel:
         return line_out
 
     def gen_srt_bilingual(
-        self, text: str, segs: List[Segment], model: str, api_key: str, base_url: str, bangumi_url: str | None = None
+        self, segs: List[Segment], model: str, api_key: str, base_url: str, bangumi_url: str | None = None
     ) -> Tuple[str, str]:
         """
         Generate bilingual srt file, first return is the ZH subtitle, second return is the ZH-JP subtitle
 
-        :param text: background text
         :param segs: list of Segment
         :param model: llm model
         :param api_key: llm api_key
@@ -100,6 +99,16 @@ class WhisperModel:
 
         async def translate(index: int) -> None:
             nonlocal trans_list
+
+            if len(trans_list) < 10:
+                text = " "
+            elif index == 0:
+                text = trans_list[0] + " " + trans_list[1] + " " + trans_list[2]
+            elif index == len(trans_list) - 1:
+                text = trans_list[-3] + " " + trans_list[-2] + " " + trans_list[-1]
+            else:
+                text = trans_list[index - 1] + " " + trans_list[index] + " " + trans_list[index + 1]
+
             jp = JP(jp=trans_list[index], background=text)
             translated_text = await tr.ask(jp)
             print(f"Translated: {trans_list[index]} ---> {translated_text.zh}")

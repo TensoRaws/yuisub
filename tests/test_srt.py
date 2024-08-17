@@ -22,7 +22,6 @@ def test_srt_bilingual() -> None:
 
     text, segs = model.transcribe(audio=str(util.TEST_AUDIO))
     srt_zh, srt_zh_jp = model.gen_srt_bilingual(
-        text=text,
         segs=segs,
         model="deepseek-chat",
         api_key=util.API_KEY,
@@ -30,8 +29,8 @@ def test_srt_bilingual() -> None:
         bangumi_url="https://bangumi.tv/subject/424883/",
     )
 
-    with open(util.projectPATH / "assets" / "test_zh.srt", "w", encoding="utf-8") as f:
+    with open(util.projectPATH / "assets" / "test.zh.srt", "w", encoding="utf-8") as f:
         f.write(srt_zh)
 
-    with open(util.projectPATH / "assets" / "test_zh_jp.srt", "w", encoding="utf-8") as f:
+    with open(util.projectPATH / "assets" / "test.zh_jp.srt", "w", encoding="utf-8") as f:
         f.write(srt_zh_jp)
