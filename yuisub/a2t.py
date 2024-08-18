@@ -7,8 +7,6 @@ import whisper
 from pydantic import BaseModel
 from pysrt import SubRipFile
 
-from yuisub.srt import format_time
-
 
 class Segment(BaseModel):
     id: int
@@ -71,3 +69,10 @@ class WhisperModel:
             line_out += f"{segment_id}\n{start_time} --> {end_time}\n{text.lstrip()}\n\n"
         subs = pysrt.from_string(line_out)
         return subs
+
+
+def format_time(seconds: float) -> str:
+    minutes, seconds = divmod(seconds, 60)
+    hours, minutes = divmod(minutes, 60)
+    milliseconds = (seconds - int(seconds)) * 1000
+    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d},{int(milliseconds):03d}"

@@ -1,19 +1,12 @@
 import asyncio
 from copy import deepcopy
-from typing import Tuple
+from typing import List, Tuple
 
 from pysrt import SubRipFile
 from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.llm import Translator
 from yuisub.prompt import ORIGIN
-
-
-def format_time(seconds: float) -> str:
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-    milliseconds = (seconds - int(seconds)) * 1000
-    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d},{int(milliseconds):03d}"
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
@@ -32,7 +25,7 @@ def bilingual(
     """
 
     # pending translation
-    trans_list = [s.text for s in srt]
+    trans_list: List[str] = [s.text for s in srt]
 
     tr = Translator(model=model, api_key=api_key, base_url=base_url, bangumi_url=bangumi_url)
     print(tr.system_prompt)
