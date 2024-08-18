@@ -1,9 +1,13 @@
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
+import pysrt
 import torch
 import whisper
 from pydantic import BaseModel
+from pysrt import SubRipFile
+
+from yuisub.srt import format_time
 
 
 class Segment(BaseModel):
@@ -54,3 +58,16 @@ class WhisperModel:
         )
         segments: List[Segment] = [Segment(**seg) for seg in result["segments"]]
         return result["text"], segments
+
+    @staticmethod
+    def gen_srt(segs: List[Segment]) -> SubRipFile:
+        line_out: str = ""
+        for s in segs:
+            segment_id = s.id + 1
+            start_time = format_time(s.start)
+            end_time = format_time(s.end)
+            text = s.text
+
+            line_out += f"{segment_id}\n{start_time} --> {end_time}\n{text.lstrip()}\n\n"
+        subs = pysrt.from_string(line_out)
+        return subs
