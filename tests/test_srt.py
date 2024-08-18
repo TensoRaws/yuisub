@@ -3,14 +3,15 @@ import os
 import pytest
 
 from tests import util
-from yuisub import WhisperModel
+from yuisub.a2t import WhisperModel
+from yuisub.srt import gen_srt, gen_srt_bilingual
 
 
 def test_srt() -> None:
     model = WhisperModel(name=util.MODEL_NAME, device=util.DEVICE)
 
     text, segs = model.transcribe(audio=str(util.TEST_AUDIO))
-    srt = model.gen_srt(segs)
+    srt = gen_srt(segs)
 
     with open(util.projectPATH / "assets" / "test.srt", "w", encoding="utf-8") as f:
         f.write(srt)
@@ -21,7 +22,7 @@ def test_srt_bilingual() -> None:
     model = WhisperModel(name=util.MODEL_NAME, device=util.DEVICE)
 
     text, segs = model.transcribe(audio=str(util.TEST_AUDIO))
-    srt_zh, srt_zh_jp = model.gen_srt_bilingual(
+    srt_zh, srt_zh_jp = gen_srt_bilingual(
         segs=segs,
         model="deepseek-chat",
         api_key=util.API_KEY,

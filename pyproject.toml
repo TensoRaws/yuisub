@@ -33,13 +33,13 @@ version = "0.0.1"
 [tool.poetry.dependencies]
 beautifulsoup4 = "*"
 openai = "*"
-openai-whisper = "*"
 pydantic = "*"
 python = "^3.9"
 requests = "*"
 tenacity = "*"
 
 [tool.poetry.group.dev.dependencies]
+openai-whisper = "*"
 pre-commit = "^3.7.0"
 
 [tool.poetry.group.test.dependencies]
