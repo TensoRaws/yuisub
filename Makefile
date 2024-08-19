@@ -11,4 +11,4 @@ lint:
 
 .PHONY: build
 build:
-	poetry build
+	poetry build --format wheel
