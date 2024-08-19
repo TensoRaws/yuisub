@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from yuisub.sub import bilingual, load
+from yuisub.sub import bilingual, load, translate
 
 # ffmpeg -i test.mkv -c:a mp3 -map 0:a:0 test.mp3
 # ffmpeg -i test.mkv -map 0:s:0 eng.srt
@@ -58,13 +58,15 @@ def main() -> None:
     else:
         sub = load(args.SUB)
 
-    sub_zh, sub_bilingual = bilingual(
+    sub_zh = translate(
         sub=sub,
         model=args.OPENAI_MODEL,
         api_key=args.OPENAI_API_KEY,
         base_url=args.OPENAI_BASE_URL,
         bangumi_url=args.BANGUMI_URL,
     )
+
+    sub_bilingual = bilingual(sub_origin=sub, sub_zh=sub_zh)
 
     if args.OUTPUT_ZH:
         sub_zh.save(args.OUTPUT_ZH)
