@@ -38,7 +38,7 @@ yuisub -h  # Displays help message
 ### Example
 
 ```python3
-from yuisub.srt import bilingual, from_file
+from yuisub import bilingual, from_file
 from yuisub.a2t import WhisperModel
 
 # srt from audio
