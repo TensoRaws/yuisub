@@ -2,8 +2,20 @@
 build-backend = "poetry-core.masonry.api"
 requires = ["poetry-core"]
 
+[tool.coverage.report]
+exclude_also = [
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+  "except Exception as e"
+]
+
 [tool.coverage.run]
-omit = ["yuisub"]
+omit = [
+  "./yuisub/__main__.py",
+  "./yuisub/__init__.py"
+]
 
 [tool.mypy]
 disable_error_code = "attr-defined"

@@ -38,6 +38,10 @@ class Translator:
             content = json.loads(response.choices[0].message.content)
             zh = ZH(**content)
 
+        except openai.AuthenticationError as e:
+            print(f"Authentication Error: {e} retrying...")
+            raise e
+
         except openai.APIConnectionError as e:
             print(f"Connection Error: {e} retrying...")
             raise e
