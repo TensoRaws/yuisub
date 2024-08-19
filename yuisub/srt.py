@@ -37,7 +37,7 @@ def bilingual(
     srt: SubRipFile, model: str, api_key: str, base_url: str, bangumi_url: str | None = None
 ) -> Tuple[SubRipFile, SubRipFile]:
     """
-    Generate bilingual srt file, first return is the ZH subtitle, second return is the ZH-JP subtitle
+    Generate bilingual srt file, first return is the Chinese subtitle, second return is the Bilingual subtitle
 
     :param srt: origin srt file
     :param model: llm model
@@ -68,13 +68,13 @@ def bilingual(
     asyncio.run(wait_tasks())
 
     # generate bilingual srt
-    line_out_zh: SubRipFile = deepcopy(srt)
-    line_out_zh_jp: SubRipFile = deepcopy(srt)
+    srt_zh: SubRipFile = deepcopy(srt)
+    srt_bilingual: SubRipFile = deepcopy(srt)
     for i, s in enumerate(srt):
         text_zh = trans_list[i]
-        text_zh_jp = trans_list[i] + "\n" + s.text
+        text_bilingual = trans_list[i] + "\n" + s.text
 
-        line_out_zh[i].text = text_zh
-        line_out_zh_jp[i].text = text_zh_jp
+        srt_zh[i].text = text_zh
+        srt_bilingual[i].text = text_bilingual
 
-    return line_out_zh, line_out_zh_jp
+    return srt_zh, srt_bilingual

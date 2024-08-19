@@ -40,7 +40,7 @@ class WhisperModel:
         word_timestamps: bool = False,
         prepend_punctuations: str = "\"'“¿([{-",
         append_punctuations: str = "\"'.。,，!！?？:：”)]}、",
-    ) -> Tuple[str, List[Segment]]:
+    ) -> List[Segment]:
         result = self.model.transcribe(
             audio=audio,
             verbose=verbose,
@@ -55,7 +55,7 @@ class WhisperModel:
             append_punctuations=append_punctuations,
         )
         segments: List[Segment] = [Segment(**seg) for seg in result["segments"]]
-        return result["text"], segments
+        return segments
 
     @staticmethod
     def gen_srt(segs: List[Segment]) -> SubRipFile:
