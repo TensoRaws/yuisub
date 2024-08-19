@@ -1,0 +1,83 @@
+[build-system]
+build-backend = "poetry-core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.coverage.run]
+omit = ["yuisub"]
+
+[tool.mypy]
+disable_error_code = "attr-defined"
+disallow_any_generics = false
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+strict = true
+warn_return_any = false
+
+[tool.poetry]
+authors = ["Tohrusky"]
+classifiers = [
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12"
+]
+description = "Auto translation of new anime episodes based on Yui-MHCP001"
+homepage = "https://github.com/TensoRaws/yuisub"
+license = "GPL-3.0-only"
+name = "yuisub"
+readme = "README.md"
+repository = "https://github.com/TensoRaws/yuisub"
+version = "0.0.2"
+
+# Requirements
+[tool.poetry.dependencies]
+beautifulsoup4 = "*"
+openai = "*"
+pydantic = "*"
+pysrt = "*"
+python = "^3.9"
+requests = "*"
+tenacity = "*"
+
+[tool.poetry.group.dev.dependencies]
+openai-whisper = "*"
+pre-commit = "^3.7.0"
+
+[tool.poetry.group.test.dependencies]
+coverage = "^7.2.0"
+pytest = "^8.0"
+pytest-cov = "^4.0"
+
+[tool.poetry.group.typing.dependencies]
+mypy = "^1.8.0"
+ruff = "^0.3.7"
+types-requests = "^2.28.8"
+
+[tool.poetry.scripts]
+yuisub = 'yuisub.__main__:main'
+
+[tool.ruff]
+extend-ignore = ["B018", "B019", "RUF001"]
+extend-select = [
+  "I",  # isort
+  "B",  # flake8-bugbear
+  "C4",  # flake8-comprehensions
+  "PGH",  # pygrep-hooks
+  "RUF",  # ruff
+  "W",  # pycodestyle
+  "YTT"  # flake8-2020
+]
+fixable = ["ALL"]
+line-length = 120
+
+[tool.ruff.format]
+indent-style = "space"
+line-ending = "auto"
+quote-style = "double"
+skip-magic-trailing-comma = false
+
+[tool.ruff.isort]
+combine-as-imports = true
+
+[tool.ruff.mccabe]
+max-complexity = 10

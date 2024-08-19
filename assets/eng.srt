@@ -1,0 +1,51 @@
+1
+00:00:06,520 --> 00:00:07,790
+<font face="Trebuchet MS" size="24">Masachika-sama.</font>
+
+2
+00:00:11,770 --> 00:00:13,110
+<font face="Trebuchet MS" size="24">Masachika-sama.</font>
+
+3
+00:00:14,520 --> 00:00:15,500
+<font face="Trebuchet MS" size="24">Ayano...</font>
+
+4
+00:00:16,010 --> 00:00:17,570
+<font face="Trebuchet MS" size="24">You need something?</font>
+
+5
+00:00:17,570 --> 00:00:19,890
+<font face="Trebuchet MS" size="24">I apologize for startling you.</font>
+
+6
+00:00:19,890 --> 00:00:22,870
+<font face="Trebuchet MS" size="24">May I have a moment of your time?</font>
+
+7
+00:00:23,330 --> 00:00:24,940
+<font face="Trebuchet MS" size="24">Uh, okay.</font>
+
+8
+00:00:24,940 --> 00:00:26,620
+<font face="Trebuchet MS" size="24">Thank you.</font>
+
+9
+00:00:26,620 --> 00:00:27,560
+<font face="Trebuchet MS" size="24">Please follow me.</font>
+
+10
+00:00:28,420 --> 00:00:31,940
+<font face="Trebuchet MS" size="24"><i>She's like a ninja. Never fails to amaze me.</i></font>
+
+11
+00:01:50,580 --> 00:01:51,250
+<font size="20"><b><font color="#fafcea">{\an7}<font size="35">Sometimes</font></font></b></font>
+
+12
+00:01:51,250 --> 00:01:52,000
+<font size="20"><font face="Times New Roman"><b><font color="#4d402e"><font size="35">{\an8}in Russian</font></font></b></font></font>
+
+13
+00:01:52,000 --> 00:01:52,750
+<font size="20"><font face="Times New Roman"><b><font color="#4d402e"><font size="35">{\an8}Hides Her</font></font></b></font></font>

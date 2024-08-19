@@ -1,0 +1,60 @@
+name: CI-test
+
+env:
+  GITHUB_ACTIONS: true
+
+on:
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+
+  pull_request:
+    branches: ["main"]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+
+  workflow_dispatch:
+
+jobs:
+  CI:
+    strategy:
+      matrix:
+        os-version: ["ubuntu-20.04", "macos-13", "windows-latest"]
+        python-version: ["3.10"]
+        poetry-version: ["1.8.3"]
+
+    runs-on: ${{ matrix.os-version }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: ${{ matrix.poetry-version }}
+
+      - uses: FedericoCarboni/setup-ffmpeg@v3
+        id: setup-ffmpeg
+        with:
+          ffmpeg-version: release
+
+      - name: Test
+        run: |
+          pip install numpy==1.26.4
+          pip install pre-commit pytest mypy ruff types-requests pytest-cov coverage pydantic openai openai-whisper requests beautifulsoup4 tenacity pysrt
+
+          make lint
+          make test
+
+      - name: Codecov
+        if: matrix.os-version == 'ubuntu-20.04'
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
