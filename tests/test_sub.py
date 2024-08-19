@@ -19,8 +19,13 @@ def test_audio() -> None:
     sub.save(util.projectPATH / "assets" / "test.audio.ass")
 
 
-@pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 def test_bilingual() -> None:
+    sub = load(util.TEST_ENG_SRT)
+    _ = bilingual(sub, sub)
+
+
+@pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
+def test_bilingual_2() -> None:
     sub = load(util.TEST_ENG_SRT)
 
     sub_zh = translate(

@@ -10,6 +10,27 @@ from tenacity import retry, stop_after_attempt, wait_random
 from yuisub.llm import Translator
 from yuisub.prompt import ORIGIN
 
+PRESET_STYLES: dict[str, SSAStyle] = {
+    "zh": SSAStyle(
+        alignment=Alignment.BOTTOM_CENTER,
+        primarycolor=Color(215, 215, 215),
+        fontsize=18,
+        fontname="Microsoft YaHei",
+        bold=True,
+        shadow=0,
+        outline=1,
+        outlinecolor=Color(198, 107, 107),
+    ),
+    "origin": SSAStyle(
+        alignment=Alignment.BOTTOM_CENTER,
+        primarycolor=pysubs2.Color(249, 246, 240),
+        fontsize=10,
+        fontname="Microsoft YaHei",
+        shadow=0,
+        outline=0.5,
+    ),
+}
+
 
 def load(sub_path: Path | str, encoding: str = "utf-8") -> SSAFile:
     """
@@ -24,7 +45,14 @@ def load(sub_path: Path | str, encoding: str = "utf-8") -> SSAFile:
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
-def translate(sub: SSAFile, model: str, api_key: str, base_url: str, bangumi_url: str | None = None) -> SSAFile:
+def translate(
+    sub: SSAFile,
+    model: str,
+    api_key: str,
+    base_url: str,
+    bangumi_url: str | None = None,
+    styles: dict[str, SSAStyle] | None = None,
+) -> SSAFile:
     """
     Translate subtitle file to Chinese
 
@@ -33,6 +61,7 @@ def translate(sub: SSAFile, model: str, api_key: str, base_url: str, bangumi_url
     :param api_key: llm api_key
     :param base_url: llm base_url
     :param bangumi_url: anime bangumi url
+    :param styles: subtitle styles, default is PRESET_STYLES
     :return:
     """
 
@@ -57,43 +86,38 @@ def translate(sub: SSAFile, model: str, api_key: str, base_url: str, bangumi_url
     asyncio.run(_wait_tasks())
 
     # generate Chinese subtitle
+    if styles is None:
+        styles = PRESET_STYLES
+
     sub_zh = deepcopy(sub)
+    sub_zh.styles = styles
     for i, _ in enumerate(sub):
         sub_zh[i].text = trans_list[i]
+        sub_zh[i].style = "zh"
 
     return sub_zh
 
 
-def bilingual(sub_origin: SSAFile, sub_zh: SSAFile) -> SSAFile:
+def bilingual(
+    sub_origin: SSAFile,
+    sub_zh: SSAFile,
+    styles: dict[str, SSAStyle] | None = None,
+) -> SSAFile:
     """
     Generate bilingual subtitle file
 
     :param sub_origin: Origin subtitle
     :param sub_zh: Chinese subtitle
+    :param styles: subtitle styles, default is PRESET_STYLES
     :return:
     """
 
     # generate bilingual subtitle
+    if styles is None:
+        styles = PRESET_STYLES
+
     sub_bilingual = SSAFile()
-    sub_bilingual.styles = {
-        "zh": SSAStyle(
-            alignment=Alignment.BOTTOM_CENTER,
-            primarycolor=Color(255, 192, 203),
-            fontsize=16,
-            fontname="Microsoft YaHei",
-            bold=True,
-            shadow=0,
-            outline=0.2,
-        ),
-        "origin": SSAStyle(
-            alignment=Alignment.BOTTOM_CENTER,
-            primarycolor=pysubs2.Color(249, 246, 240),
-            fontsize=12,
-            fontname="Microsoft YaHei",
-            shadow=0,
-            outline=0.5,
-        ),
-    }
+    sub_bilingual.styles = styles
 
     for e in sub_origin:
         e.style = "origin"
