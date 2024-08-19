@@ -26,10 +26,10 @@ def test_bilingual() -> None:
 
     srt_zh, srt_zh_jp = bilingual(
         srt=srt,
-        model="deepseek-chat",
-        api_key=util.API_KEY,
-        base_url="https://api.deepseek.com",
-        bangumi_url="https://bangumi.tv/subject/424883/",
+        model=util.OPENAI_MODEL,
+        api_key=util.OPENAI_API_KEY,
+        base_url=util.OPENAI_BASE_URL,
+        bangumi_url=util.BANGUMI_URL,
     )
 
     srt_zh.save(util.projectPATH / "assets" / "test.zh.srt")

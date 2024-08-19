@@ -12,7 +12,7 @@ origin = ORIGIN(
 
 
 def test_llm_none() -> None:
-    t = Translator(model="deepseek-chat", api_key=util.API_KEY, base_url="https://api.deepseek.com")
+    t = Translator(model=util.OPENAI_MODEL, api_key=util.OPENAI_API_KEY, base_url=util.OPENAI_BASE_URL)
     print(t.system_prompt)
     res = asyncio.run(t.ask(ORIGIN(origin="")))
     assert res.zh == ""
@@ -20,7 +20,11 @@ def test_llm_none() -> None:
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 def test_llm() -> None:
-    t = Translator(model="deepseek-chat", api_key=util.API_KEY, base_url="https://api.deepseek.com")
+    t = Translator(
+        model=util.OPENAI_MODEL,
+        api_key=util.OPENAI_API_KEY,
+        base_url=util.OPENAI_BASE_URL,
+    )
     print(t.system_prompt)
     res = asyncio.run(t.ask(origin))
     print(res.zh)
@@ -29,10 +33,10 @@ def test_llm() -> None:
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 def test_llm_bangumi() -> None:
     t = Translator(
-        model="deepseek-chat",
-        api_key=util.API_KEY,
-        base_url="https://api.deepseek.com",
-        bangumi_url="https://bangumi.tv/subject/424883/",
+        model=util.OPENAI_MODEL,
+        api_key=util.OPENAI_API_KEY,
+        base_url=util.OPENAI_BASE_URL,
+        bangumi_url=util.BANGUMI_URL,
     )
     print(t.system_prompt)
     res = asyncio.run(t.ask(origin))
@@ -42,10 +46,10 @@ def test_llm_bangumi() -> None:
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 def test_llm_bangumi_2() -> None:
     t = Translator(
-        model="deepseek-chat",
-        api_key=util.API_KEY,
-        base_url="https://api.deepseek.com",
-        bangumi_url="https://bangumi.tv/subject/424883/",
+        model=util.OPENAI_MODEL,
+        api_key=util.OPENAI_API_KEY,
+        base_url=util.OPENAI_BASE_URL,
+        bangumi_url=util.BANGUMI_URL,
     )
     print(t.system_prompt)
     s = ORIGIN(
