@@ -25,7 +25,7 @@ pip install openai-whisper
 
 ### Command Line Usage
 
-`yuisub` can be used from the command line to generate bilingual SRT files. Here's how to use it:
+`yuisub` can be used from the command line to generate bilingual ASS files. Here's how to use it:
 
 ```bash
 yuisub -h  # Displays help message
@@ -38,29 +38,32 @@ yuisub -h  # Displays help message
 ### Example
 
 ```python3
-from yuisub import bilingual, from_file
+from yuisub import translate, bilingual, load
 from yuisub.a2t import WhisperModel
 
-# srt from audio
+# sub from audio
 model = WhisperModel(name="medium", device="cuda")
-segs = model.transcribe(audio="path/to/audio.mp3")
-srt = model.gen_srt(segs)
+sub = model.transcribe(audio="path/to/audio.mp3")
 
-# srt from file
-# srt = from_file("path/to/input.srt")
+# sub from file
+# sub = from_file("path/to/input.srt")
 
-# Generate bilingual SRT
-srt_zh, srt_bilingual = bilingual(
-    srt=srt,
+# generate bilingual subtitle
+sub_zh = translate(
+    sub=sub,
     model="gpt_model_name",
     api_key="your_openai_api_key",
     base_url="api_url",
     bangumi_url="https://bangumi.tv/subject/424883/"
 )
+sub_bilingual = bilingual(
+    sub_origin=sub,
+    sub_zh=sub_zh
+)
 
-# Save the SRT files
-srt_zh.save("path/to/output.zh.srt")
-srt_bilingual.save("path/to/output.bilingual.srt")
+# save the ASS files
+sub_zh.save("path/to/output.zh.ass")
+sub_bilingual.save("path/to/output.bilingual.ass")
 ```
 
 ### License
