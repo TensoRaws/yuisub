@@ -8,11 +8,12 @@ from yuisub.srt import bilingual, from_file
 
 parser = argparse.ArgumentParser()
 parser.description = "Generate bilingual SRT files from audio or SRT input."
-# srt
+# input
 parser.add_argument("-a", "--AUDIO", type=str, help="Path to the audio file", required=False)
 parser.add_argument("-s", "--SRT", type=str, help="Path to the input SRT file", required=False)
-parser.add_argument("-oz", "--OUTPUT_ZH", type=str, help="Path to save the Chinese SRT file", required=True)
-parser.add_argument("-ob", "--OUTPUT_BILINGUAL", type=str, help="Path to save the bilingual SRT file", required=True)
+# srt output
+parser.add_argument("-oz", "--OUTPUT_ZH", type=str, help="Path to save the Chinese SRT file", required=False)
+parser.add_argument("-ob", "--OUTPUT_BILINGUAL", type=str, help="Path to save the bilingual SRT file", required=False)
 # openai gpt
 parser.add_argument("-om", "--OPENAI_MODEL", type=str, help="Openai model name", required=True)
 parser.add_argument("-api", "--OPENAI_API_KEY", type=str, help="Openai API key", required=True)
@@ -29,6 +30,9 @@ args = parser.parse_args()
 def main() -> None:
     if args.AUDIO and args.SRT:
         raise ValueError("Please provide only one input file, either audio or SRT.")
+
+    if not args.OUTPUT_ZH and not args.OUTPUT_BILINGUAL:
+        raise ValueError("Please provide output paths for the subtitles.")
 
     if args.AUDIO:
         import torch
