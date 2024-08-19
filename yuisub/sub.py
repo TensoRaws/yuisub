@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List
 
 import pysubs2
-from pysubs2 import Alignment, Color, SSAFile, SSAStyle
+from pysubs2 import Alignment, Color, SSAEvent, SSAFile, SSAStyle
 from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.llm import Translator
@@ -29,7 +29,37 @@ PRESET_STYLES: dict[str, SSAStyle] = {
         shadow=0,
         outline=0.5,
     ),
+    "ad": SSAStyle(
+        alignment=Alignment.TOP_CENTER,
+        primarycolor=Color(215, 215, 215),
+        fontsize=10,
+        fontname="Microsoft YaHei",
+        shadow=0.5,
+        outline=1,
+        outlinecolor=Color(198, 107, 107),
+    ),
 }
+
+
+def advertisement(ad: str | None = None, start: int = 0, end: int = 5000) -> SSAEvent:
+    """
+    Add advertisement to subtitle
+
+    :param ad: advertisement
+    :param start: start time, ms
+    :param end: end time, ms
+    :return:
+    """
+    if ad is None:
+        ad = "本字幕由 TensoRaws 提供，使用 LLM 翻译 \\N 请遵循 CC BY-NC-SA 4.0 协议使用"
+
+    sub_ad = SSAEvent()
+    sub_ad.start = start
+    sub_ad.end = end
+    sub_ad.text = ad
+    sub_ad.style = "ad"
+
+    return sub_ad
 
 
 def load(sub_path: Path | str, encoding: str = "utf-8") -> SSAFile:
@@ -52,6 +82,7 @@ def translate(
     base_url: str,
     bangumi_url: str | None = None,
     styles: dict[str, SSAStyle] | None = None,
+    ad: SSAEvent | None = advertisement(),  # noqa: B008
 ) -> SSAFile:
     """
     Translate subtitle file to Chinese
@@ -62,6 +93,7 @@ def translate(
     :param base_url: llm base_url
     :param bangumi_url: anime bangumi url
     :param styles: subtitle styles, default is PRESET_STYLES
+    :param ad: add advertisement to subtitle, default is TensoRaws
     :return:
     """
 
@@ -89,11 +121,18 @@ def translate(
     if styles is None:
         styles = PRESET_STYLES
 
-    sub_zh = deepcopy(sub)
+    sub_zh = SSAFile()
     sub_zh.styles = styles
-    for i, _ in enumerate(sub):
-        sub_zh[i].text = trans_list[i]
-        sub_zh[i].style = "zh"
+
+    # add advertisement
+    if ad:
+        sub_zh.append(ad)
+
+    sub_temp = deepcopy(sub)
+    for i, e in enumerate(sub_temp):
+        e.style = "zh"
+        e.text = trans_list[i]
+        sub_zh.append(e)
 
     return sub_zh
 
@@ -124,7 +163,6 @@ def bilingual(
         sub_bilingual.append(e)
 
     for e in sub_zh:
-        e.style = "zh"
         sub_bilingual.append(e)
 
     return sub_bilingual
