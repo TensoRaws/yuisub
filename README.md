@@ -38,7 +38,7 @@ yuisub -h  # Displays help message
 ### Example
 
 ```python3
-from yuisub import bilingual, load
+from yuisub import translate, bilingual, load
 from yuisub.a2t import WhisperModel
 
 # sub from audio
@@ -49,12 +49,16 @@ sub = model.transcribe(audio="path/to/audio.mp3")
 # sub = from_file("path/to/input.srt")
 
 # generate bilingual subtitle
-sub_zh, sub_bilingual = bilingual(
+sub_zh = translate(
     sub=sub,
     model="gpt_model_name",
     api_key="your_openai_api_key",
     base_url="api_url",
     bangumi_url="https://bangumi.tv/subject/424883/"
+)
+sub_bilingual = bilingual(
+    sub_origin=sub,
+    sub_zh=sub_zh
 )
 
 # save the ASS files
