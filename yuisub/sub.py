@@ -76,14 +76,31 @@ def bilingual(sub_origin: SSAFile, sub_zh: SSAFile) -> SSAFile:
     # generate bilingual subtitle
     sub_bilingual = SSAFile()
     sub_bilingual.styles = {
-        "bottom": SSAStyle(alignment=Alignment.BOTTOM_CENTER, primarycolor=Color(255, 255, 0)),
-        "top": SSAStyle(alignment=Alignment.TOP_CENTER, primarycolor=pysubs2.Color(0, 128, 128)),
+        "zh": SSAStyle(
+            alignment=Alignment.BOTTOM_CENTER,
+            primarycolor=Color(255, 192, 203),
+            fontsize=16,
+            fontname="Microsoft YaHei",
+            bold=True,
+            shadow=0,
+            outline=0.2,
+        ),
+        "origin": SSAStyle(
+            alignment=Alignment.BOTTOM_CENTER,
+            primarycolor=pysubs2.Color(249, 246, 240),
+            fontsize=12,
+            fontname="Microsoft YaHei",
+            shadow=0,
+            outline=0.5,
+        ),
     }
+
     for e in sub_origin:
-        e.style = "bottom"
+        e.style = "origin"
         sub_bilingual.append(e)
+
     for e in sub_zh:
-        e.style = "top"
+        e.style = "zh"
         sub_bilingual.append(e)
 
     return sub_bilingual
