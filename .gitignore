@@ -161,6 +161,7 @@ cython_debug/
 .idea/
 /.ruff_cache/
 
+/assets/*.mkv
 /assets/*.mp3
 /assets/*.srt
 /assets/*.ass

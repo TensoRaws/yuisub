@@ -50,11 +50,11 @@ def translate(sub: SSAFile, model: str, api_key: str, base_url: str, bangumi_url
         trans_list[index] = translated_text.zh
 
     # wait for all tasks to finish
-    async def wait_tasks() -> None:
+    async def _wait_tasks() -> None:
         tasks = [_translate(index) for index in range(len(sub))]
         await asyncio.gather(*tasks)
 
-    asyncio.run(wait_tasks())
+    asyncio.run(_wait_tasks())
 
     # generate Chinese subtitle
     sub_zh = deepcopy(sub)
