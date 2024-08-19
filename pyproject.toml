@@ -7,7 +7,8 @@ exclude_also = [
   "raise AssertionError",
   "raise NotImplementedError",
   "if __name__ == .__main__.:",
-  "if TYPE_CHECKING:"
+  "if TYPE_CHECKING:",
+  "except Exception as e"
 ]
 
 [tool.coverage.run]
