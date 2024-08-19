@@ -39,7 +39,7 @@ license = "GPL-3.0-only"
 name = "yuisub"
 readme = "README.md"
 repository = "https://github.com/TensoRaws/yuisub"
-version = "0.0.4"
+version = "0.0.5"
 
 # Requirements
 [tool.poetry.dependencies]
