@@ -13,18 +13,18 @@ from yuisub.prompt import ORIGIN
 PRESET_STYLES: dict[str, SSAStyle] = {
     "zh": SSAStyle(
         alignment=Alignment.BOTTOM_CENTER,
-        primarycolor=Color(249, 246, 240),
+        primarycolor=Color(215, 215, 215),
         fontsize=18,
         fontname="Microsoft YaHei",
         bold=True,
         shadow=0,
         outline=1,
-        outlinecolor=Color(255, 192, 203),
+        outlinecolor=Color(198, 107, 107),
     ),
     "origin": SSAStyle(
         alignment=Alignment.BOTTOM_CENTER,
         primarycolor=pysubs2.Color(249, 246, 240),
-        fontsize=12,
+        fontsize=10,
         fontname="Microsoft YaHei",
         shadow=0,
         outline=0.5,
