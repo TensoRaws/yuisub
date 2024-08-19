@@ -162,6 +162,7 @@ def bilingual(
         e.style = "origin"
         sub_bilingual.append(e)
 
+    # notice: deepcopy is necessary for the zh subtitle if you wanna edit it in bilingual!
     for e in sub_zh:
         sub_bilingual.append(e)
 
