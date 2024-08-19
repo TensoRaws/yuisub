@@ -46,7 +46,7 @@ model = WhisperModel(name="medium", device="cuda")
 sub = model.transcribe(audio="path/to/audio.mp3")
 
 # sub from file
-# sub = from_file("path/to/input.srt")
+# sub = load("path/to/input.srt")
 
 # generate bilingual subtitle
 sub_zh = translate(
