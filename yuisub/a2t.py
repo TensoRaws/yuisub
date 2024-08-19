@@ -1,24 +1,10 @@
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple, Union
 
 import numpy as np
-import pysrt
+import pysubs2
 import torch
 import whisper
-from pydantic import BaseModel
-from pysrt import SubRipFile
-
-
-class Segment(BaseModel):
-    id: int
-    seek: int
-    start: float
-    end: float
-    text: str
-    tokens: List[int]
-    temperature: float
-    avg_logprob: float
-    compression_ratio: float
-    no_speech_prob: float
+from pysubs2 import SSAFile
 
 
 class WhisperModel:
@@ -40,7 +26,7 @@ class WhisperModel:
         word_timestamps: bool = False,
         prepend_punctuations: str = "\"'“¿([{-",
         append_punctuations: str = "\"'.。,，!！?？:：”)]}、",
-    ) -> List[Segment]:
+    ) -> SSAFile:
         result = self.model.transcribe(
             audio=audio,
             verbose=verbose,
@@ -54,25 +40,4 @@ class WhisperModel:
             prepend_punctuations=prepend_punctuations,
             append_punctuations=append_punctuations,
         )
-        segments: List[Segment] = [Segment(**seg) for seg in result["segments"]]
-        return segments
-
-    @staticmethod
-    def gen_srt(segs: List[Segment]) -> SubRipFile:
-        line_out: str = ""
-        for s in segs:
-            segment_id = s.id + 1
-            start_time = format_time(s.start)
-            end_time = format_time(s.end)
-            text = s.text
-
-            line_out += f"{segment_id}\n{start_time} --> {end_time}\n{text.lstrip()}\n\n"
-        subs = pysrt.from_string(line_out)
-        return subs
-
-
-def format_time(seconds: float) -> str:
-    minutes, seconds = divmod(seconds, 60)
-    hours, minutes = divmod(minutes, 60)
-    milliseconds = (seconds - int(seconds)) * 1000
-    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d},{int(milliseconds):03d}"
+        return pysubs2.load_from_whisper(result)
