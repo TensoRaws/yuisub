@@ -162,3 +162,4 @@ cython_debug/
 /.ruff_cache/
 
 /assets/*.srt
+/assets/*.mp3

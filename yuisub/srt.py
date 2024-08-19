@@ -1,12 +1,35 @@
 import asyncio
 from copy import deepcopy
-from typing import List, Tuple
+from pathlib import Path
+from typing import Any, List, Tuple
 
+import pysrt
+from bs4 import BeautifulSoup
 from pysrt import SubRipFile
 from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.llm import Translator
 from yuisub.prompt import ORIGIN
+
+
+def from_file(srt_path: Path | str, encoding: Any = None) -> SubRipFile:
+    """
+    Load srt file from file path, auto remove html tags
+
+    :param srt_path: srt file path
+    :param encoding: srt file encoding, default is utf-8
+    :return:
+    """
+    srt = pysrt.open(path=str(srt_path), encoding=encoding)
+    for sub in srt:
+        try:
+            soup = BeautifulSoup(sub.text, "html.parser")
+            text = soup.get_text()
+            sub.text = text
+        except Exception as e:
+            print(e)
+            print(sub.text)
+    return srt
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
