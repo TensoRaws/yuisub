@@ -68,8 +68,11 @@ def main() -> None:
         bangumi_url=args.BANGUMI_URL,
     )
 
-    srt_zh.save(args.OUTPUT_ZH)
-    srt_bilingual.save(args.OUTPUT_BILINGUAL)
+    if args.OUTPUT_ZH:
+        srt_zh.save(args.OUTPUT_ZH)
+
+    if args.OUTPUT_BILINGUAL:
+        srt_bilingual.save(args.OUTPUT_BILINGUAL)
 
 
 if __name__ == "__main__":
