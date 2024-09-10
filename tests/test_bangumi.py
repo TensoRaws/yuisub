@@ -10,4 +10,5 @@ def test_bangumi() -> None:
 
     for url in url_list:
         r = bangumi(url)
-        print(r)
+        print(r.introduction)
+        print(r.characters)

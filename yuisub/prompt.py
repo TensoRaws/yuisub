@@ -2,6 +2,8 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from yuisub.bangumi import BGM
+
 
 class ORIGIN(BaseModel):
     origin: str
@@ -11,7 +13,10 @@ class ZH(BaseModel):
     zh: str
 
 
-def anime_prompt(bangumi_info: str = "", summary: str = "") -> str:
+def anime_prompt(bangumi_info: Optional[BGM] = None, summary: str = "") -> str:
+    if bangumi_info is None:
+        bangumi_info = BGM(introduction="", characters="")
+
     return (
         """
             你的目标是把这集新番的台词翻译成中文，要翻译得自然、流畅和地道，使用贴合二次元的表达方式。
@@ -19,10 +24,15 @@ def anime_prompt(bangumi_info: str = "", summary: str = "") -> str:
             此外，我可能会给你一些动漫相关的信息和本集的剧情总结。请注意，当人名等专有名词出现时，严格按照我提供的信息进行翻译。
 
             """
-        + bangumi_info
         + """
 
-    Summary:
+    角色列表（日/中）：
+
+    """
+        + bangumi_info.characters
+        + """
+
+    本集简介：
 
     """
         + summary
@@ -41,9 +51,9 @@ EXAMPLE JSON OUTPUT:
     )
 
 
-def summary_prompt(bangumi_info: Optional[str] = None) -> str:
+def summary_prompt(bangumi_info: Optional[BGM] = None) -> str:
     if bangumi_info is None:
-        bangumi_info = ""
+        bangumi_info = BGM(introduction="", characters="")
 
     return (
         """
@@ -52,7 +62,18 @@ def summary_prompt(bangumi_info: Optional[str] = None) -> str:
             此外，我会提供给你一些动漫相关的信息，帮助你更好地理解剧情。请注意，当人名等专有名词出现时，严格按照我提供的信息总结。
 
             """
-        + bangumi_info
+        + """
+
+    动漫简介：
+
+    """
+        + bangumi_info.introduction
+        + """
+
+    角色列表（日/中）：
+
+    """
+        + bangumi_info.characters
         + """
 
 EXAMPLE INPUT:
