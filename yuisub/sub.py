@@ -7,7 +7,8 @@ import pysubs2
 from pysubs2 import Alignment, Color, SSAEvent, SSAFile, SSAStyle
 from tenacity import retry, stop_after_attempt, wait_random
 
-from yuisub.llm import Translator
+from yuisub.bangumi import bangumi
+from yuisub.llm import Summarizer, Translator
 from yuisub.prompt import ORIGIN
 
 PRESET_STYLES: dict[str, SSAStyle] = {
@@ -99,8 +100,23 @@ def translate(
 
     # pending translation
     trans_list: List[str] = [s.text for s in sub]
+    bangumi_info = bangumi(bangumi_url)
 
-    tr = Translator(model=model, api_key=api_key, base_url=base_url, bangumi_url=bangumi_url)
+    su = Summarizer(
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
+        bangumi_info=bangumi_info,
+    )
+    summary = asyncio.run(su.ask(ORIGIN(origin="\n".join(trans_list))))
+
+    tr = Translator(
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
+        bangumi_info=bangumi_info,
+        summary=summary.zh,
+    )
     print(tr.system_prompt)
 
     async def _translate(index: int) -> None:
