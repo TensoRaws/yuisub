@@ -1,7 +1,7 @@
 import asyncio
 from copy import deepcopy
 from pathlib import Path
-from typing import List
+from typing import Dict, List, Optional, Union
 
 import pysubs2
 from pysubs2 import Alignment, Color, SSAEvent, SSAFile, SSAStyle
@@ -42,7 +42,7 @@ PRESET_STYLES: dict[str, SSAStyle] = {
 }
 
 
-def advertisement(ad: str | None = None, start: int = 0, end: int = 5000) -> SSAEvent:
+def advertisement(ad: Optional[str] = None, start: int = 0, end: int = 5000) -> SSAEvent:
     """
     Add advertisement to subtitle
 
@@ -63,7 +63,7 @@ def advertisement(ad: str | None = None, start: int = 0, end: int = 5000) -> SSA
     return sub_ad
 
 
-def load(sub_path: Path | str, encoding: str = "utf-8") -> SSAFile:
+def load(sub_path: Union[Path, str], encoding: str = "utf-8") -> SSAFile:
     """
     Load subtitle from file path, default encoding is utf-8 and remove style
 
@@ -81,9 +81,9 @@ def translate(
     model: str,
     api_key: str,
     base_url: str,
-    bangumi_url: str | None = None,
-    styles: dict[str, SSAStyle] | None = None,
-    ad: SSAEvent | None = advertisement(),  # noqa: B008
+    bangumi_url: Optional[str] = None,
+    styles: Optional[Dict[str, SSAStyle]] = None,
+    ad: Optional[SSAEvent] = advertisement(),  # noqa: B008
 ) -> SSAFile:
     """
     Translate subtitle file to Chinese
@@ -158,7 +158,7 @@ def translate(
 def bilingual(
     sub_origin: SSAFile,
     sub_zh: SSAFile,
-    styles: dict[str, SSAStyle] | None = None,
+    styles: Optional[Dict[str, SSAStyle]] = None,
 ) -> SSAFile:
     """
     Generate bilingual subtitle file
