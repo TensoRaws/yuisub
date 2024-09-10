@@ -25,7 +25,6 @@ def anime_prompt(bangumi_info: Optional[BGM] = None, summary: str = "") -> str:
 
             """
         + """
-
     角色列表（日/中）：
 
     """
