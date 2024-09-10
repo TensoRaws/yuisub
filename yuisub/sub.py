@@ -108,6 +108,8 @@ def translate(
         base_url=base_url,
         bangumi_info=bangumi_info,
     )
+
+    print("Summarizing...")
     summary = asyncio.run(su.ask(ORIGIN(origin="\n".join(trans_list))))
 
     tr = Translator(

@@ -5,6 +5,8 @@ from tenacity import retry, stop_after_attempt, stop_after_delay, wait_random
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_delay(10) | stop_after_attempt(30))
 def bangumi(url: str | None = None) -> str:
+    print("Getting bangumi info...")
+
     if url is None or url == "":
         print("Warning: bangumi url is empty")
         return ""
