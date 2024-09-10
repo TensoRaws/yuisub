@@ -1,14 +1,18 @@
 import json
+from typing import Optional
 
 import openai
 from openai import AsyncOpenAI
 from tenacity import retry, stop_after_attempt, wait_random
 
+from yuisub.bangumi import BGM
 from yuisub.prompt import ORIGIN, ZH, anime_prompt, summary_prompt
 
 
 class Translator:
-    def __init__(self, model: str, api_key: str, base_url: str, bangumi_info: str = "", summary: str = "") -> None:
+    def __init__(
+        self, model: str, api_key: str, base_url: str, bangumi_info: Optional[BGM] = None, summary: str = ""
+    ) -> None:
         self.model = model
         self.client = AsyncOpenAI(
             api_key=api_key,
@@ -56,7 +60,7 @@ class Translator:
 
 
 class Summarizer(Translator):
-    def __init__(self, model: str, api_key: str, base_url: str, bangumi_info: str = "") -> None:
+    def __init__(self, model: str, api_key: str, base_url: str, bangumi_info: Optional[BGM] = None) -> None:
         super().__init__(model, api_key, base_url, bangumi_info)
         self.system_prompt = summary_prompt(bangumi_info)
         self.corner_case = False
