@@ -1,10 +1,12 @@
+from typing import Optional
+
 import requests
 from bs4 import BeautifulSoup
 from tenacity import retry, stop_after_attempt, stop_after_delay, wait_random
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_delay(10) | stop_after_attempt(30))
-def bangumi(url: str | None = None) -> str:
+def bangumi(url: Optional[str] = None) -> str:
     print("Getting bangumi info...")
 
     if url is None or url == "":

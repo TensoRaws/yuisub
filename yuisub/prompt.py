@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 
 
@@ -39,7 +41,7 @@ EXAMPLE JSON OUTPUT:
     )
 
 
-def summary_prompt(bangumi_info: str | None = None) -> str:
+def summary_prompt(bangumi_info: Optional[str] = None) -> str:
     if bangumi_info is None:
         bangumi_info = ""
 
