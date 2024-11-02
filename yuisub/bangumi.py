@@ -246,5 +246,5 @@ def bangumi(url: Optional[str] = None) -> BGM:
     except Exception as e:
         print("failed to get bangumi info, retrying...")
         raise e
-    
+
     return BGM(introduction=intro, characters=characters)
