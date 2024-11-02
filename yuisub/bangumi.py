@@ -13,7 +13,7 @@ class BGM(BaseModel):
     introduction: str
     characters: str
 
-def extract_bangumi_id(url):
+def extract_bangumi_id(url: str) -> Optional[str]:
     """
     从Bangumi URL中提取番剧ID
 
@@ -21,7 +21,7 @@ def extract_bangumi_id(url):
         url: Bangumi番剧的URL
 
     Returns:
-        番剧ID，如果未找到则返回None
+        番剧ID, 如果未找到则返回None
     """
 
     # 正则表达式匹配番剧ID
@@ -33,7 +33,7 @@ def extract_bangumi_id(url):
     else:
         return None
 
-def construct_api_url(bangumi_id):
+def construct_api_url(bangumi_id: str) -> str:
     """
     根据番剧ID构建API URL
 
@@ -46,7 +46,7 @@ def construct_api_url(bangumi_id):
 
     return f"https://api.bgm.tv/v0/subjects/{bangumi_id}"
 
-def get_characters(character, headers):
+def get_characters(character: Dict[str, Any], headers: Dict[str, str]) -> None:
     ids = character["id"]
     names = character["name"]
     global characters, lock
@@ -60,7 +60,7 @@ def get_characters(character, headers):
     if response_chars_info.status_code != 200:
         print("failed to get characters info")
         raise Exception("failed to get characters info")
-            
+
     #解析API返回的数据
     """ 返回的数据格式如下
     {
@@ -120,9 +120,9 @@ def bangumi(url: Optional[str] = None) -> BGM:
 
 
     #此处保留原方法
-    #因为直接使用API请求到的数据不全，没有简体中文名
-    #如果使用API遍历角色ID获取简体中文名，会导致请求次数过多，降低性能
-    
+    #因为直接使用API请求到的数据不全, 没有简体中文名
+    #如果使用API遍历角色ID获取简体中文名, 会导致请求次数过多, 降低性能
+
     """
     anime_url = url
     if anime_url[-1] == "/":
@@ -130,11 +130,11 @@ def bangumi(url: Optional[str] = None) -> BGM:
     characters_url = anime_url + "/characters"
     """
 
-    #对输入的URL进行处理，获取番剧ID
-    #例如：https://bangumi.tv/subject/425998 为输入的URL
+    #对输入的URL进行处理, 获取番剧ID
+    #例如: https://bangumi.tv/subject/425998 为输入的URL
     #则获取的番剧ID为425998
-    #所对应的API URL为：https://api.bgm.tv/v0/subjects/425998
-    #所对应的角色API URL为：https://api.bgm.tv/v0/subjects/425998/characters
+    #所对应的API URL为: https://api.bgm.tv/v0/subjects/425998
+    #所对应的角色API URL为: https://api.bgm.tv/v0/subjects/425998/characters
 
     #去除URL末尾的"/"
     if url[-1] == "/":
@@ -193,7 +193,7 @@ def bangumi(url: Optional[str] = None) -> BGM:
         if response.status_code != 200:
             print("failed to get bangumi info")
             raise Exception("failed to get bangumi info")
-        
+
         #解析API返回的数据
         data = response.json()
         intro = data["summary"]
@@ -205,7 +205,7 @@ def bangumi(url: Optional[str] = None) -> BGM:
         if response_chars.status_code != 200:
             print("failed to get characters info")
             raise Exception("failed to get characters info")
-        
+
         #解析API返回的数据
         """ 返回的数据格式如下
         [
@@ -227,19 +227,19 @@ def bangumi(url: Optional[str] = None) -> BGM:
 
         #获取ID
         #获取角色简体中文名的方式
-        #1.遍历角色ID，获取角色信息
-        #2.请求角色信息API，获取角色简体中文名
-        #角色详细信息API地址，例如：https://api.bgm.tv/v0/characters/35607
+        #1.遍历角色ID, 获取角色信息
+        #2.请求角色信息API, 获取角色简体中文名
+        #角色详细信息API地址, 例如: https://api.bgm.tv/v0/characters/35607
         #其中35607为角色ID和name
         data_chars = response_chars.json()
-        
+
         #使用多线程来加速
         threads = []
         for character in data_chars:
             thread = threading.Thread(target=get_characters, args=(character, headers))
             threads.append(thread)
             thread.start()
-            
+
         for thread in threads:
             thread.join()
 
