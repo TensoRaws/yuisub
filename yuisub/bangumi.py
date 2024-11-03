@@ -1,17 +1,19 @@
-from typing import Optional, Dict, Any
-
-import requests
 import re
 import threading
+from typing import Any, Dict, Optional
+
+import requests
 from pydantic import BaseModel
 from tenacity import retry, stop_after_attempt, stop_after_delay, wait_random
 
 characters: str = ""
 lock = threading.RLock()
 
+
 class BGM(BaseModel):
     introduction: str
     characters: str
+
 
 def extract_bangumi_id(url: str) -> Optional[str]:
     """
@@ -33,6 +35,7 @@ def extract_bangumi_id(url: str) -> Optional[str]:
     else:
         return None
 
+
 def construct_api_url(bangumi_id: str) -> str:
     """
     根据番剧ID构建API URL
@@ -46,14 +49,15 @@ def construct_api_url(bangumi_id: str) -> str:
 
     return f"https://api.bgm.tv/v0/subjects/{bangumi_id}"
 
+
 def get_characters(character: Dict[str, Any], headers: Dict[str, str]) -> None:
     ids = character["id"]
     names = character["name"]
     global characters, lock
-    #构造角色详细信息API URL
+    # 构造角色详细信息API URL
     characters_info_url = "https://api.bgm.tv/v0/characters/" + str(ids)
 
-    #请求角色详细信息API
+    # 请求角色详细信息API
     response_chars_info = requests.get(characters_info_url, headers=headers)
     response_chars_info.encoding = "utf-8"
 
@@ -61,7 +65,7 @@ def get_characters(character: Dict[str, Any], headers: Dict[str, str]) -> None:
         print("failed to get characters info")
         raise Exception("failed to get characters info")
 
-    #解析API返回的数据
+    # 解析API返回的数据
     """ 返回的数据格式如下
     {
         "id": 0,
@@ -92,11 +96,11 @@ def get_characters(character: Dict[str, Any], headers: Dict[str, str]) -> None:
         }
     }
     """
-    #获取infobox中的简体中文名
+    # 获取infobox中的简体中文名
     data_chars_info = response_chars_info.json()
     for infobox in data_chars_info["infobox"]:
         if infobox["key"] == "简体中文名":
-            #组合角色简体中文名
+            # 组合角色简体中文名
             with lock:
                 characters += f"{names} / {infobox['value']}\n"
             break
@@ -104,6 +108,7 @@ def get_characters(character: Dict[str, Any], headers: Dict[str, str]) -> None:
             with lock:
                 characters += f"{names}\n"
             break
+
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_delay(10) | stop_after_attempt(30))
 def bangumi(url: Optional[str] = None) -> BGM:
@@ -118,10 +123,9 @@ def bangumi(url: Optional[str] = None) -> BGM:
         print("Warning: bangumi url is empty")
         return BGM(introduction="", characters="")
 
-
-    #此处保留原方法
-    #因为直接使用API请求到的数据不全, 没有简体中文名
-    #如果使用API遍历角色ID获取简体中文名, 会导致请求次数过多, 降低性能
+    # 此处保留原方法
+    # 因为直接使用API请求到的数据不全, 没有简体中文名
+    # 如果使用API遍历角色ID获取简体中文名, 会导致请求次数过多, 降低性能
 
     """
     anime_url = url
@@ -130,31 +134,35 @@ def bangumi(url: Optional[str] = None) -> BGM:
     characters_url = anime_url + "/characters"
     """
 
-    #对输入的URL进行处理, 获取番剧ID
-    #例如: https://bangumi.tv/subject/425998 为输入的URL
-    #则获取的番剧ID为425998
-    #所对应的API URL为: https://api.bgm.tv/v0/subjects/425998
-    #所对应的角色API URL为: https://api.bgm.tv/v0/subjects/425998/characters
+    # 对输入的URL进行处理, 获取番剧ID
+    # 例如: https://bangumi.tv/subject/425998 为输入的URL
+    # 则获取的番剧ID为425998
+    # 所对应的API URL为: https://api.bgm.tv/v0/subjects/425998
+    # 所对应的角色API URL为: https://api.bgm.tv/v0/subjects/425998/characters
 
-    #去除URL末尾的"/"
+    # 去除URL末尾的"/"
     if url[-1] == "/":
         url = url[:-1]
-    #构建API URL
+    # 构建API URL
     bangumi_id = extract_bangumi_id(url)
+
+    if bangumi_id is None:
+        print("Error: Invalid bangumi URL, could not extract ID.")
+        return BGM(introduction="", characters="")
+
     api_url = construct_api_url(bangumi_id)
-    #构建characters_id_url
+    # 构建characters_id_url
     characters_id_url = api_url + "/characters"
 
-
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': '*/*',
-        'Host': 'api.bgm.tv',
-        'Connection': 'keep-alive',
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+        "Accept": "*/*",
+        "Host": "api.bgm.tv",
+        "Connection": "keep-alive",
     }
 
     try:
-        #此处保留原方法
+        # 此处保留原方法
         """
         response = requests.get(anime_url, headers=headers)
         response.encoding = "utf-8"
@@ -186,7 +194,7 @@ def bangumi(url: Optional[str] = None) -> BGM:
             characters += str(names) + "\n"
         """
 
-        #使用API获取summary数据
+        # 使用API获取summary数据
         response = requests.get(api_url, headers=headers)
         response.encoding = "utf-8"
 
@@ -194,11 +202,11 @@ def bangumi(url: Optional[str] = None) -> BGM:
             print("failed to get bangumi info")
             raise Exception("failed to get bangumi info")
 
-        #解析API返回的数据
+        # 解析API返回的数据
         data = response.json()
         intro = data["summary"]
 
-        #获取角色信息
+        # 获取角色信息
         response_chars = requests.get(characters_id_url, headers=headers)
         response_chars.encoding = "utf-8"
 
@@ -206,7 +214,7 @@ def bangumi(url: Optional[str] = None) -> BGM:
             print("failed to get characters info")
             raise Exception("failed to get characters info")
 
-        #解析API返回的数据
+        # 解析API返回的数据
         """ 返回的数据格式如下
         [
            {
@@ -225,15 +233,15 @@ def bangumi(url: Optional[str] = None) -> BGM:
         ]
         """
 
-        #获取ID
-        #获取角色简体中文名的方式
-        #1.遍历角色ID, 获取角色信息
-        #2.请求角色信息API, 获取角色简体中文名
-        #角色详细信息API地址, 例如: https://api.bgm.tv/v0/characters/35607
-        #其中35607为角色ID和name
+        # 获取ID
+        # 获取角色简体中文名的方式
+        # 1.遍历角色ID, 获取角色信息
+        # 2.请求角色信息API, 获取角色简体中文名
+        # 角色详细信息API地址, 例如: https://api.bgm.tv/v0/characters/35607
+        # 其中35607为角色ID和name
         data_chars = response_chars.json()
 
-        #使用多线程来加速
+        # 使用多线程来加速
         threads = []
         for character in data_chars:
             thread = threading.Thread(target=get_characters, args=(character, headers))
