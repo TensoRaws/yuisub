@@ -3,6 +3,7 @@ import threading
 from typing import Any, Dict, Optional
 
 import requests
+# from bs4 import Beautiful
 from pydantic import BaseModel
 from tenacity import retry, stop_after_attempt, stop_after_delay, wait_random
 
