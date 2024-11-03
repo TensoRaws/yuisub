@@ -27,7 +27,15 @@ def extract_bangumi_id(url: str) -> Optional[str]:
     """
 
     # 正则表达式匹配番剧ID
-    pattern = r"https://bangumi.tv/subject/(\d+)"
+
+    """
+    有以下几种URL格式
+    "https://bangumi.tv/subject/424883/",
+    "https://bgm.tv/subject/424883",
+    "https://bangumi.tv/subject/315574",
+    """
+
+    pattern = r"(?:https?://)?(?:www\.)?(?:bangumi\.tv|bgm\.tv)/subject/(\d+)"
     match = re.search(pattern, url)
 
     if match:
