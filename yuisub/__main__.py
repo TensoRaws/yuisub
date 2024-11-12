@@ -1,4 +1,5 @@
 import argparse
+import asyncio
 import sys
 
 from yuisub.sub import bilingual, load, translate
@@ -27,7 +28,7 @@ parser.add_argument("-wm", "--WHISPER_MODEL", type=str, help="Whisper model to u
 args = parser.parse_args()
 
 
-def main() -> None:
+async def main() -> None:
     if args.AUDIO and args.SUB:
         raise ValueError("Please provide only one input file, either audio or subtitle file")
 
@@ -56,9 +57,9 @@ def main() -> None:
         sub = model.transcribe(audio=args.AUDIO)
 
     else:
-        sub = load(args.SUB)
+        sub = await load(args.SUB)
 
-    sub_zh = translate(
+    sub_zh = await translate(
         sub=sub,
         model=args.OPENAI_MODEL,
         api_key=args.OPENAI_API_KEY,
@@ -66,7 +67,7 @@ def main() -> None:
         bangumi_url=args.BANGUMI_URL,
     )
 
-    sub_bilingual = bilingual(sub_origin=sub, sub_zh=sub_zh)
+    sub_bilingual = await bilingual(sub_origin=sub, sub_zh=sub_zh)
 
     if args.OUTPUT_ZH:
         sub_zh.save(args.OUTPUT_ZH)
@@ -76,4 +77,4 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
