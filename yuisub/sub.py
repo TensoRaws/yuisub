@@ -52,7 +52,7 @@ def advertisement(ad: Optional[str] = None, start: int = 0, end: int = 5000) -> 
     :return:
     """
     if ad is None:
-        ad = "本字幕由 TensoRaws 提供，使用 LLM 翻译 \\N 请遵循 CC BY-NC-SA 4.0 协议使用"
+        ad = "本字幕由 TensoRaws 提供, 使用 LLM 翻译 \\N 请遵循 CC BY-NC-SA 4.0 协议使用"
 
     sub_ad = SSAEvent()
     sub_ad.start = start
@@ -63,20 +63,16 @@ def advertisement(ad: Optional[str] = None, start: int = 0, end: int = 5000) -> 
     return sub_ad
 
 
-def load(sub_path: Union[Path, str], encoding: str = "utf-8") -> SSAFile:
+async def load(sub_path: Union[Path, str], encoding: str = "utf-8") -> SSAFile:
     """
-    Load subtitle from file path, default encoding is utf-8 and remove style
-
-    :param sub_path: subtitle file path
-    :param encoding: subtitle file encoding, default is utf-8
-    :return:
+    异步加载字幕文件
     """
-    sub = pysubs2.load(str(sub_path), encoding=encoding)
-    return sub
+    # 由于pysubs2.load本身是同步的, 我们使用线程池来避免阻塞
+    return await asyncio.to_thread(pysubs2.load, str(sub_path), encoding=encoding)
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
-def translate(
+async def translate(
     sub: SSAFile,
     model: str,
     api_key: str,
@@ -86,6 +82,17 @@ def translate(
     ad: Optional[SSAEvent] = advertisement(),  # noqa: B008
 ) -> SSAFile:
     """
+    异步翻译字幕文件
+
+    :param sub: 原始字幕
+    :param model: LLM模型
+    :param api_key: API密钥
+    :param base_url: API基础URL
+    :param bangumi_url: bangumi URL
+    :param styles: 字幕样式
+    :param ad: 广告信息
+    :return: 翻译后的字幕文件
+
     Translate subtitle file to Chinese
 
     :param sub: origin subtitle
@@ -97,70 +104,79 @@ def translate(
     :param ad: add advertisement to subtitle, default is TensoRaws
     :return:
     """
+    try:
+        # 获取待翻译的文本列表
+        trans_list: List[str] = [s.text for s in sub]
 
-    # pending translation
-    trans_list: List[str] = [s.text for s in sub]
-    bangumi_info = bangumi(bangumi_url)
+        # 异步获取bangumi信息
+        bangumi_info = await bangumi(bangumi_url) if bangumi_url else None
 
-    su = Summarizer(
-        model=model,
-        api_key=api_key,
-        base_url=base_url,
-        bangumi_info=bangumi_info,
-    )
+        # 初始化总结器
+        summarizer = Summarizer(
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
+            bangumi_info=bangumi_info,
+        )
 
-    print("Summarizing...")
-    summary = asyncio.run(su.ask(ORIGIN(origin="\n".join(trans_list))))
+        print("Summarizing...")
+        # 获取总结
+        summary = await summarizer.ask(ORIGIN(origin="\n".join(trans_list)))
 
-    tr = Translator(
-        model=model,
-        api_key=api_key,
-        base_url=base_url,
-        bangumi_info=bangumi_info,
-        summary=summary.zh,
-    )
-    print(tr.system_prompt)
+        # 初始化翻译器
+        translator = Translator(
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
+            bangumi_info=bangumi_info,
+            summary=summary.zh,
+        )
+        print(translator.system_prompt)
 
-    async def _translate(index: int) -> None:
-        nonlocal trans_list
+        # 创建翻译任务
+        async def translate_text(index: int) -> None:
+            nonlocal trans_list
+            translated_text = await translator.ask(ORIGIN(origin=trans_list[index]))
+            print(f"Translated: {trans_list[index]} ---> {translated_text.zh}")
+            trans_list[index] = translated_text.zh
 
-        translated_text = await tr.ask(ORIGIN(origin=trans_list[index]))
-        print(f"Translated: {trans_list[index]} ---> {translated_text.zh}")
-        trans_list[index] = translated_text.zh
-
-    # wait for all tasks to finish
-    async def _wait_tasks() -> None:
-        tasks = [_translate(index) for index in range(len(sub))]
+        # 并发执行翻译任务
+        tasks = [translate_text(i) for i in range(len(sub))]
         await asyncio.gather(*tasks)
 
-    asyncio.run(_wait_tasks())
+        # 生成中文字幕
+        if styles is None:
+            styles = PRESET_STYLES
 
-    # generate Chinese subtitle
-    if styles is None:
-        styles = PRESET_STYLES
+        sub_zh = SSAFile()
+        sub_zh.styles = styles
 
-    sub_zh = SSAFile()
-    sub_zh.styles = styles
+        # 添加广告
+        if ad:
+            sub_zh.append(ad)
 
-    # add advertisement
-    if ad:
-        sub_zh.append(ad)
+        # 复制并更新字幕
+        sub_temp = deepcopy(sub)
+        for i, e in enumerate(sub_temp):
+            e.style = "zh"
+            e.text = trans_list[i]
+            sub_zh.append(e)
 
-    sub_temp = deepcopy(sub)
-    for i, e in enumerate(sub_temp):
-        e.style = "zh"
-        e.text = trans_list[i]
-        sub_zh.append(e)
+        return sub_zh
 
-    return sub_zh
+    except Exception as e:
+        print(f"Translation error: {e}")
+        raise
 
 
-def bilingual(
+async def bilingual(
     sub_origin: SSAFile,
     sub_zh: SSAFile,
     styles: Optional[Dict[str, SSAStyle]] = None,
 ) -> SSAFile:
     """
+    异步生成双语字幕
+
     Generate bilingual subtitle file
 
     :param sub_origin: Origin subtitle
@@ -185,3 +201,24 @@ def bilingual(
         sub_bilingual.append(e)
 
     return sub_bilingual
+
+
+# 使用示例
+async def main() -> None:
+    # 加载字幕
+    sub = await load("path/to/subtitle.ass")
+
+    # 翻译字幕
+    translated_sub = await translate(
+        sub=sub, model="your-model", api_key="your-api-key", base_url="your-base-url", bangumi_url="your-bangumi-url"
+    )
+
+    # 生成双语字幕
+    bilingual_sub = await bilingual(sub, translated_sub)
+
+    # 保存字幕
+    await asyncio.to_thread(bilingual_sub.save, "output.ass")
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

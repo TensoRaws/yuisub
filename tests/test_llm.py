@@ -66,7 +66,7 @@ def test_llm_bangumi() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=asyncio.run(bangumi(util.BANGUMI_URL)),
     )
     print(t.system_prompt)
     res = asyncio.run(t.ask(origin))
@@ -79,7 +79,7 @@ def test_llm_bangumi_2() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=asyncio.run(bangumi(util.BANGUMI_URL)),
     )
     print(t.system_prompt)
     s = ORIGIN(
@@ -96,7 +96,7 @@ def test_llm_summary() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=asyncio.run(bangumi(util.BANGUMI_URL)),
     )
     print(t.system_prompt)
     res = asyncio.run(t.ask(summary_origin))

@@ -67,6 +67,9 @@ types-requests = "^2.28.8"
 [tool.poetry.scripts]
 yuisub = 'yuisub.__main__:main'
 
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+
 [tool.ruff]
 extend-ignore = ["B018", "B019", "RUF001"]
 extend-select = [
