@@ -38,32 +38,40 @@ yuisub -h  # Displays help message
 ### Example
 
 ```python3
+import asyncio
+
 from yuisub import translate, bilingual, load
 from yuisub.a2t import WhisperModel
 
-# sub from audio
-model = WhisperModel(name="medium", device="cuda")
-sub = model.transcribe(audio="path/to/audio.mp3")
+# use an asynchronous environment
+async def main() -> None:
 
-# sub from file
-# sub = load("path/to/input.srt")
+    # sub from audio
+    model = WhisperModel(name="medium", device="cuda")
+    sub = model.transcribe(audio="path/to/audio.mp3")
 
-# generate bilingual subtitle
-sub_zh = translate(
-    sub=sub,
-    model="gpt_model_name",
-    api_key="your_openai_api_key",
-    base_url="api_url",
-    bangumi_url="https://bangumi.tv/subject/424883/"
-)
-sub_bilingual = bilingual(
-    sub_origin=sub,
-    sub_zh=sub_zh
-)
+    # sub from file
+    # sub = await load("path/to/input.srt")
 
-# save the ASS files
-sub_zh.save("path/to/output.zh.ass")
-sub_bilingual.save("path/to/output.bilingual.ass")
+    # generate bilingual subtitle
+    sub_zh = await translate(
+        sub=sub,
+        model="gpt_model_name",
+        api_key="your_openai_api_key",
+        base_url="api_url",
+        bangumi_url="https://bangumi.tv/subject/424883/"
+    )
+
+    sub_bilingual = await bilingual(
+        sub_origin=sub,
+        sub_zh=sub_zh
+    )
+
+    # save the ASS files
+    sub_zh.save("path/to/output.zh.ass")
+    sub_bilingual.save("path/to/output.bilingual.ass")
+
+asyncio.run(main())
 ```
 
 ### License

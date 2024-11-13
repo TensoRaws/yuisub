@@ -66,6 +66,12 @@ def advertisement(ad: Optional[str] = None, start: int = 0, end: int = 5000) -> 
 async def load(sub_path: Union[Path, str], encoding: str = "utf-8") -> SSAFile:
     """
     异步加载字幕文件
+
+    Load subtitle from file path, default encoding is utf-8 and remove style
+
+    :param sub_path: subtitle file path
+    :param encoding: subtitle file encoding, default is utf-8
+    :return:
     """
     # 由于pysubs2.load本身是同步的, 我们使用线程池来避免阻塞
     return await asyncio.to_thread(pysubs2.load, str(sub_path), encoding=encoding)
