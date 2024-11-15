@@ -7,8 +7,8 @@ from yuisub.a2t import WhisperModel
 from yuisub.sub import bilingual, load, translate
 
 
-async def test_sub() -> None:
-    sub = await load(util.TEST_ENG_SRT)
+def test_sub() -> None:
+    sub = load(util.TEST_ENG_SRT)
     sub.save(util.projectPATH / "assets" / "test.en.ass")
 
 
@@ -19,14 +19,14 @@ def test_audio() -> None:
     sub.save(util.projectPATH / "assets" / "test.audio.ass")
 
 
-def test_bilingual() -> None:
+async def test_bilingual() -> None:
     sub = load(util.TEST_ENG_SRT)
-    _ = bilingual(sub, sub)
+    await bilingual(sub, sub)
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 async def test_bilingual_2() -> None:
-    sub = await load(util.TEST_ENG_SRT)
+    sub = load(util.TEST_ENG_SRT)
 
     sub_zh = await translate(
         sub=sub,

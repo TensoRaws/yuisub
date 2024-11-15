@@ -57,7 +57,7 @@ async def main() -> None:
         sub = model.transcribe(audio=args.AUDIO)
 
     else:
-        sub = await load(args.SUB)
+        sub = load(args.SUB)
 
     sub_zh = await translate(
         sub=sub,
