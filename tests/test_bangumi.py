@@ -1,7 +1,7 @@
 from yuisub import bangumi
 
 
-def test_bangumi() -> None:
+async def test_bangumi() -> None:
     url_list = [
         "https://bangumi.tv/subject/424883/",
         "https://bgm.tv/subject/424883",
@@ -9,6 +9,6 @@ def test_bangumi() -> None:
     ]
 
     for url in url_list:
-        r = bangumi(url)
+        r = await bangumi(url)
         print(r.introduction)
         print(r.characters)

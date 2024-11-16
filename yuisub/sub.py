@@ -52,7 +52,7 @@ def advertisement(ad: Optional[str] = None, start: int = 0, end: int = 5000) -> 
     :return:
     """
     if ad is None:
-        ad = "本字幕由 TensoRaws 提供，使用 LLM 翻译 \\N 请遵循 CC BY-NC-SA 4.0 协议使用"
+        ad = "本字幕由 TensoRaws 提供, 使用 LLM 翻译 \\N 请遵循 CC BY-NC-SA 4.0 协议使用"
 
     sub_ad = SSAEvent()
     sub_ad.start = start
@@ -76,7 +76,7 @@ def load(sub_path: Union[Path, str], encoding: str = "utf-8") -> SSAFile:
 
 
 @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
-def translate(
+async def translate(
     sub: SSAFile,
     model: str,
     api_key: str,
@@ -97,12 +97,14 @@ def translate(
     :param ad: add advertisement to subtitle, default is TensoRaws
     :return:
     """
-
     # pending translation
     trans_list: List[str] = [s.text for s in sub]
-    bangumi_info = bangumi(bangumi_url)
 
-    su = Summarizer(
+    # get bangumi info asynchronously
+    bangumi_info = await bangumi(bangumi_url) if bangumi_url else None
+
+    # initialize summarizer
+    summarizer = Summarizer(
         model=model,
         api_key=api_key,
         base_url=base_url,
@@ -110,32 +112,31 @@ def translate(
     )
 
     print("Summarizing...")
-    summary = asyncio.run(su.ask(ORIGIN(origin="\n".join(trans_list))))
+    # get summary
+    summary = await summarizer.ask(ORIGIN(origin="\n".join(trans_list)))
 
-    tr = Translator(
+    # initialize translator
+    translator = Translator(
         model=model,
         api_key=api_key,
         base_url=base_url,
         bangumi_info=bangumi_info,
         summary=summary.zh,
     )
-    print(tr.system_prompt)
+    print(translator.system_prompt)
 
+    # create translate text task
     async def _translate(index: int) -> None:
         nonlocal trans_list
-
-        translated_text = await tr.ask(ORIGIN(origin=trans_list[index]))
+        translated_text = await translator.ask(ORIGIN(origin=trans_list[index]))
         print(f"Translated: {trans_list[index]} ---> {translated_text.zh}")
         trans_list[index] = translated_text.zh
 
-    # wait for all tasks to finish
-    async def _wait_tasks() -> None:
-        tasks = [_translate(index) for index in range(len(sub))]
-        await asyncio.gather(*tasks)
+    # start translation tasks
+    tasks = [_translate(i) for i in range(len(sub))]
+    await asyncio.gather(*tasks)
 
-    asyncio.run(_wait_tasks())
-
-    # generate Chinese subtitle
+    # gen Chinese subtitle
     if styles is None:
         styles = PRESET_STYLES
 
@@ -146,6 +147,7 @@ def translate(
     if ad:
         sub_zh.append(ad)
 
+    # copy origin subtitle and replace text with translated text
     sub_temp = deepcopy(sub)
     for i, e in enumerate(sub_temp):
         e.style = "zh"
@@ -155,13 +157,13 @@ def translate(
     return sub_zh
 
 
-def bilingual(
+async def bilingual(
     sub_origin: SSAFile,
     sub_zh: SSAFile,
     styles: Optional[Dict[str, SSAStyle]] = None,
 ) -> SSAFile:
     """
-    Generate bilingual subtitle file
+    Generate bilingual subtitle file asynchronously
 
     :param sub_origin: Origin subtitle
     :param sub_zh: Chinese subtitle

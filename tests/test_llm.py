@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import pytest
@@ -41,63 +40,63 @@ Thank you for your time.
 )
 
 
-def test_llm_none() -> None:
+async def test_llm_none() -> None:
     t = Translator(model=util.OPENAI_MODEL, api_key=util.OPENAI_API_KEY, base_url=util.OPENAI_BASE_URL)
     print(t.system_prompt)
-    res = asyncio.run(t.ask(ORIGIN(origin="")))
+    res = await t.ask(ORIGIN(origin=""))
     assert res.zh == ""
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
-def test_llm() -> None:
+async def test_llm() -> None:
     t = Translator(
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
     )
     print(t.system_prompt)
-    res = asyncio.run(t.ask(origin))
+    res = await t.ask(origin)
     print(res.zh)
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
-def test_llm_bangumi() -> None:
+async def test_llm_bangumi() -> None:
     t = Translator(
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(util.BANGUMI_URL),
     )
     print(t.system_prompt)
-    res = asyncio.run(t.ask(origin))
+    res = await t.ask(origin)
     print(res.zh)
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
-def test_llm_bangumi_2() -> None:
+async def test_llm_bangumi_2() -> None:
     t = Translator(
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(util.BANGUMI_URL),
     )
     print(t.system_prompt)
     s = ORIGIN(
         origin="♪ 星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と",
     )
 
-    res = asyncio.run(t.ask(s))
+    res = await t.ask(s)
     print(res.zh)
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
-def test_llm_summary() -> None:
+async def test_llm_summary() -> None:
     t = Summarizer(
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(util.BANGUMI_URL),
     )
     print(t.system_prompt)
-    res = asyncio.run(t.ask(summary_origin))
+    res = await t.ask(summary_origin)
     print(res.zh)
