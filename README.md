@@ -51,7 +51,7 @@ async def main() -> None:
     sub = model.transcribe(audio="path/to/audio.mp3")
 
     # sub from file
-    # sub = await load("path/to/input.srt")
+    # sub = load("path/to/input.srt")
 
     # generate bilingual subtitle
     sub_zh = await translate(
