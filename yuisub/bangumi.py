@@ -1,20 +1,12 @@
-# bangumi.py
-
 import asyncio
 import re
-import time
-from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 import httpx
 from pydantic import BaseModel
 
-# 使用信号量限制并发请求数
-SEMAPHORE_LIMIT = 32
 
-
-@dataclass
-class Character:
+class Character(BaseModel):
     id: int
     name: str
     chinese_name: Optional[str] = None
@@ -26,21 +18,38 @@ class BGM(BaseModel):
 
 
 async def extract_bangumi_id(url: str) -> Optional[str]:
-    """从Bangumi URL中提取番剧ID"""
+    """
+    Extract bangumi ID from Bangumi URL
+
+    :param url: Bangumi URL
+    :return: Bangumi ID
+    """
     pattern = r"(?:https?://)?(?:www\.)?(?:bangumi\.tv|bgm\.tv)/subject/(\d+)"
     match = re.search(pattern, url)
     return match.group(1) if match else None
 
 
 def construct_api_url(bangumi_id: str) -> str:
-    """根据番剧ID构建API URL"""
+    """
+    Construct API URL based on bangumi ID
+
+    :param bangumi_id: Bangumi ID
+    :return: API URL
+    """
     return f"https://api.bgm.tv/v0/subjects/{bangumi_id}"
 
 
 async def get_character_info(
     client: httpx.AsyncClient, character: Dict[str, Any], semaphore: asyncio.Semaphore
 ) -> Character:
-    """获取单个角色的详细信息"""
+    """
+    Get detailed info of a character
+
+    :param client: httpx.AsyncClient
+    :param character: Character data
+    :param semaphore: asyncio.Semaphore
+    :return: Character object
+    """
     async with semaphore:
         char_id = character["id"]
         char_name = character["name"]
@@ -62,7 +71,13 @@ async def get_character_info(
 
 
 async def fetch_bangumi_data(client: httpx.AsyncClient, url: str) -> tuple[str, List[Dict[str, Any]]]:
-    """获取番剧基本信息和角色列表"""
+    """
+    Get base info and character list asynchronously
+
+    :param client: httpx.AsyncClient
+    :param url: Bangumi URL
+    :return: Tuple of introduction and character list
+    """
     bangumi_id = await extract_bangumi_id(url)
     if not bangumi_id:
         raise ValueError("Invalid bangumi URL")
@@ -81,15 +96,14 @@ async def fetch_bangumi_data(client: httpx.AsyncClient, url: str) -> tuple[str, 
 
 async def bangumi(url: Optional[str] = None) -> BGM:
     """
-    异步获取番剧信息和角色列表
+    Get bangumi info and character list asynchronously
 
-    Args:
-        url: Bangumi URL
-
-    Returns:
-        BGM object containing introduction and characters info
+    :param url: Bangumi URL
+    :return: BGM object
     """
     print("Getting bangumi info...")
+
+    SEMAPHORE_LIMIT = 32
 
     if not url:
         print("Warning: bangumi url is empty")
@@ -134,20 +148,3 @@ async def bangumi(url: Optional[str] = None) -> BGM:
         except Exception as e:
             print(f"Error fetching bangumi info: {e}")
             raise
-
-
-async def main() -> None:
-    """
-    Main function for testing bangumi functionality
-    """
-    url = "https://bangumi.tv/subject/315574"
-    start_time = time.time()
-    result = await bangumi(url)
-    use_time = time.time() - start_time
-    print(f"Introduction:\n{result.introduction[:100]}...")
-    print(f"Characters:\n{result.characters}")
-    print(f"Use time: {use_time}")
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
