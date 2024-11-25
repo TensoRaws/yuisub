@@ -21,7 +21,7 @@ parser.add_argument("-api", "--OPENAI_API_KEY", type=str, help="Openai API key",
 parser.add_argument("-url", "--OPENAI_BASE_URL", type=str, help="Openai base URL", required=True)
 # bangumi
 parser.add_argument("-bgm", "--BANGUMI_URL", type=str, help="Anime Bangumi URL", required=False)
-parser.add_argument("-ac","--BANGUMI_ACCESS_TOKEN", type=str, help="Anime Bangumi Access Token", required=False)
+parser.add_argument("-ac", "--BANGUMI_ACCESS_TOKEN", type=str, help="Anime Bangumi Access Token", required=False)
 # whisper
 parser.add_argument("-d", "--TORCH_DEVICE", type=str, help="Pytorch device to use", required=False)
 parser.add_argument("-wm", "--WHISPER_MODEL", type=str, help="Whisper model to use", required=False)
