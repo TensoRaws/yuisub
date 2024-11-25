@@ -94,7 +94,7 @@ async def fetch_bangumi_data(client: httpx.AsyncClient, url: str) -> tuple[str, 
     return response_info.json()["summary"], response_chars.json()
 
 
-async def bangumi(url: Optional[str] = None) -> BGM:
+async def bangumi(url: Optional[str] = None, token: Optional[str] = None) -> BGM:
     """
     Get bangumi info and character list asynchronously
 
@@ -119,6 +119,9 @@ async def bangumi(url: Optional[str] = None) -> BGM:
         "Host": "api.bgm.tv",
         "Connection": "keep-alive",
     }
+
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
 
     async with httpx.AsyncClient(headers=headers, timeout=30.0) as client:
         try:
