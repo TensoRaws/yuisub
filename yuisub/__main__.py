@@ -19,8 +19,9 @@ parser.add_argument("-ob", "--OUTPUT_BILINGUAL", type=str, help="Path to save th
 parser.add_argument("-om", "--OPENAI_MODEL", type=str, help="Openai model name", required=True)
 parser.add_argument("-api", "--OPENAI_API_KEY", type=str, help="Openai API key", required=True)
 parser.add_argument("-url", "--OPENAI_BASE_URL", type=str, help="Openai base URL", required=True)
-# bangumi url
+# bangumi
 parser.add_argument("-bgm", "--BANGUMI_URL", type=str, help="Anime Bangumi URL", required=False)
+parser.add_argument("-ac", "--BANGUMI_ACCESS_TOKEN", type=str, help="Anime Bangumi Access Token", required=False)
 # whisper
 parser.add_argument("-d", "--TORCH_DEVICE", type=str, help="Pytorch device to use", required=False)
 parser.add_argument("-wm", "--WHISPER_MODEL", type=str, help="Whisper model to use", required=False)
@@ -65,6 +66,7 @@ async def main() -> None:
         api_key=args.OPENAI_API_KEY,
         base_url=args.OPENAI_BASE_URL,
         bangumi_url=args.BANGUMI_URL,
+        bangumi_access_token=args.BANGUMI_ACCESS_TOKEN,
     )
 
     sub_bilingual = await bilingual(sub_origin=sub, sub_zh=sub_zh)

@@ -82,6 +82,7 @@ async def translate(
     api_key: str,
     base_url: str,
     bangumi_url: Optional[str] = None,
+    bangumi_access_token: Optional[str] = None,
     styles: Optional[Dict[str, SSAStyle]] = None,
     ad: Optional[SSAEvent] = advertisement(),  # noqa: B008
 ) -> SSAFile:
@@ -93,6 +94,7 @@ async def translate(
     :param api_key: llm api_key
     :param base_url: llm base_url
     :param bangumi_url: anime bangumi url
+    :param bangumi_access_token: anime bangumi access token
     :param styles: subtitle styles, default is PRESET_STYLES
     :param ad: add advertisement to subtitle, default is TensoRaws
     :return:
@@ -101,7 +103,7 @@ async def translate(
     trans_list: List[str] = [s.text for s in sub]
 
     # get bangumi info asynchronously
-    bangumi_info = await bangumi(bangumi_url) if bangumi_url else None
+    bangumi_info = await bangumi(bangumi_url, bangumi_access_token) if bangumi_url else None
 
     # initialize summarizer
     summarizer = Summarizer(
