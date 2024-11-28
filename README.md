@@ -40,7 +40,7 @@ yuisub -h  # Displays help message
 ```python3
 import asyncio
 
-from yuisub import translate, bilingual, load
+from yuisub.sub import translate, bilingual, load
 from yuisub.a2t import WhisperModel
 
 # use an asynchronous environment
