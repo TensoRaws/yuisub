@@ -59,7 +59,7 @@ class SubtitleTranslator:
 
             whisper_model_instance = WhisperModel(name=model_name, device=device)
             sub = whisper_model_instance.transcribe(audio=str(audio_path))
-        else:
+        elif sub_path:
             if isinstance(sub_path, (str, Path)):
                 sub = load(sub_path)
             elif isinstance(sub_path, pysubs2.SSAFile):
@@ -86,7 +86,7 @@ class SubtitleTranslator:
         )
         sub_bilingual = await bilingual(
             sub_origin=self.sub,
-            sub_zh=self.sub_zh,
+            sub_zh=sub_zh,
             styles=PRESET_STYLES,
         )
         return sub_zh, sub_bilingual
