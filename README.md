@@ -74,6 +74,45 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
+Here is a complete example of how to use the SubtitleTranslator class in a script:
+
+```python3
+import asyncio
+from yuisub.sub_translator import SubtitleTranslator
+
+async def main():
+    # Choose one of the following based on input type
+
+    # Using audio input
+    translator = await SubtitleTranslator.from_audio(
+        audio_path='path_to_audio.mkv',
+        openai_model='gpt-4',
+        openai_api_key='my_openai_key',
+        openai_base_url='https://api.openai.com/v1',
+        bangumi_url='https://bangumi.example.com/subject/123',
+        bangumi_access_token='my_bangumi_token',
+        torch_device='cuda',
+        whisper_model='large-v2'
+    )
+
+    # Or using subtitle file input
+    # translator = await SubtitleTranslator.from_sub(
+    #     sub_path='path_to_sub.srt',
+    #     openai_model='gpt-4',
+    #     openai_api_key='my_openai_key',
+    #     openai_base_url='https://api.openai.com/v1',
+    #     bangumi_url='https://bangumi.example.com/subject/123',
+    #     bangumi_access_token='my_bangumi_token'
+    # )
+
+    await translator.translate()
+    translator.sub_zh.save('output_zh.ass')
+    translator.sub_bilingual.save('output_bilingual.ass')
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
 ### License
 
 This project is licensed under the BSD 3-Clause - see
