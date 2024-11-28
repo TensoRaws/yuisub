@@ -82,23 +82,20 @@ import asyncio
 from yuisub.translator import SubtitleTranslator
 
 async def main():
-    # Choose one of the following based on input type
-
-    # Using audio input
     translator = await SubtitleTranslator.load_sub(
         # Using subtitle file input
         sub_path='path_to_sub.srt',
 
         # Or using audio input
         # audio_path='path_to_audio.mkv',
+        # torch_device='cuda',
+        # whisper_model='large-v2',
 
         openai_model='gpt-4',
         openai_api_key='my_openai_key',
         openai_base_url='https://api.openai.com/v1',
         bangumi_url='https://bangumi.example.com/subject/123',
-        bangumi_access_token='my_bangumi_token',
-        torch_device='cuda',
-        whisper_model='large-v2'
+        bangumi_access_token='my_bangumi_token'
     )
 
     sub_zh, sub_bilingual = await translator.get_subtitles()
