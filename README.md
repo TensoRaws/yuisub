@@ -78,6 +78,7 @@ Here is a complete example of how to use the SubtitleTranslator class in a scrip
 
 ```python3
 import asyncio
+
 from yuisub.sub_translator import SubtitleTranslator
 
 async def main():
