@@ -1,10 +1,9 @@
 import sys
-from typing import Optional
+from pathlib import Path
+from typing import Optional, Tuple, Union
 
 import pysubs2
-import torch
 
-from yuisub.a2t import WhisperModel
 from yuisub.prompt import PRESET_STYLES
 from yuisub.sub import bilingual, load, translate
 
@@ -29,9 +28,10 @@ class SubtitleTranslator:
         self.sub_bilingual = None
 
     @classmethod
-    async def from_audio(
+    async def load_sub(
         cls,
-        audio_path: str,
+        sub_path: Union[str, Path, pysubs2.SSAFile],
+        audio_path: Union[str, Path],
         openai_model: str,
         openai_api_key: str,
         openai_base_url: str,
@@ -40,20 +40,31 @@ class SubtitleTranslator:
         torch_device: Optional[str] = None,
         whisper_model: Optional[str] = None,
     ) -> "SubtitleTranslator":
-        if torch_device:
-            device = torch_device
-        else:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-            if sys.platform == "darwin":
-                device = "mps"
+        if audio_path:
+            import torch
 
-        if whisper_model:
-            model_name = whisper_model
-        else:
-            model_name = "medium" if device == "cpu" else "large-v2"
+            from yuisub.a2t import WhisperModel
 
-        whisper_model_instance = WhisperModel(name=model_name, device=device)
-        sub = whisper_model_instance.transcribe(audio=audio_path)
+            if torch_device:
+                device = torch_device
+            else:
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+                if sys.platform == "darwin":
+                    device = "mps"
+
+            if whisper_model:
+                model_name = whisper_model
+            else:
+                model_name = "medium" if device == "cpu" else "large-v2"
+
+            whisper_model_instance = WhisperModel(name=model_name, device=device)
+            sub = whisper_model_instance.transcribe(audio=str(audio_path))
+        else:
+            if isinstance(sub_path, (str, Path)):
+                sub = load(sub_path)
+            elif isinstance(sub_path, pysubs2.SSAFile):
+                sub = sub_path
+
         return cls(
             sub=sub,
             openai_model=openai_model,
@@ -63,28 +74,8 @@ class SubtitleTranslator:
             bangumi_access_token=bangumi_access_token,
         )
 
-    @classmethod
-    async def from_sub(
-        cls,
-        sub_path: str,
-        openai_model: str,
-        openai_api_key: str,
-        openai_base_url: str,
-        bangumi_url: Optional[str] = None,
-        bangumi_access_token: Optional[str] = None,
-    ) -> "SubtitleTranslator":
-        sub = load(sub_path)
-        return cls(
-            sub=sub,
-            openai_model=openai_model,
-            openai_api_key=openai_api_key,
-            openai_base_url=openai_base_url,
-            bangumi_url=bangumi_url,
-            bangumi_access_token=bangumi_access_token,
-        )
-
-    async def translate(self) -> None:
-        self.sub_zh = await translate(
+    async def get_subtitles(self) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
+        sub_zh = await translate(
             sub=self.sub,
             model=self.openai_model,
             api_key=self.openai_api_key,
@@ -93,8 +84,9 @@ class SubtitleTranslator:
             bangumi_access_token=self.bangumi_access_token,
             styles=PRESET_STYLES,
         )
-        self.sub_bilingual = await bilingual(
+        sub_bilingual = await bilingual(
             sub_origin=self.sub,
             sub_zh=self.sub_zh,
             styles=PRESET_STYLES,
         )
+        return sub_zh, sub_bilingual

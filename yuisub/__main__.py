@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from yuisub.sub_translator import SubtitleTranslator
+from yuisub.translator import SubtitleTranslator
 
 parser = argparse.ArgumentParser(description="Generate Bilingual Subtitle from audio or subtitle file")
 
@@ -29,37 +29,29 @@ async def main() -> None:
     if args.AUDIO and args.SUB:
         raise ValueError("Please provide only one input file, either audio or subtitle file")
 
+    if not args.AUDIO and not args.SUB:
+        raise ValueError("Please provide an input file, either audio or subtitle file")
+
     if not args.OUTPUT_ZH and not args.OUTPUT_BILINGUAL:
         raise ValueError("Please provide output paths for the subtitles.")
 
-    if args.AUDIO:
-        translator = await SubtitleTranslator.from_audio(
-            audio_path=args.AUDIO,
-            openai_model=args.OPENAI_MODEL,
-            openai_api_key=args.OPENAI_API_KEY,
-            openai_base_url=args.OPENAI_BASE_URL,
-            bangumi_url=args.BANGUMI_URL,
-            bangumi_access_token=args.BANGUMI_ACCESS_TOKEN,
-            torch_device=args.TORCH_DEVICE,
-            whisper_model=args.WHISPER_MODEL,
-        )
-    elif args.SUB:
-        translator = await SubtitleTranslator.from_sub(
-            sub_path=args.SUB,
-            openai_model=args.OPENAI_MODEL,
-            openai_api_key=args.OPENAI_API_KEY,
-            openai_base_url=args.OPENAI_BASE_URL,
-            bangumi_url=args.BANGUMI_URL,
-            bangumi_access_token=args.BANGUMI_ACCESS_TOKEN,
-        )
-    else:
-        raise ValueError("Please provide an input file, either audio or subtitle file")
+    translator = await SubtitleTranslator.load_sub(
+        sub_path=args.SUB,
+        audio_path=args.AUDIO,
+        openai_model=args.OPENAI_MODEL,
+        openai_api_key=args.OPENAI_API_KEY,
+        openai_base_url=args.OPENAI_BASE_URL,
+        bangumi_url=args.BANGUMI_URL,
+        bangumi_access_token=args.BANGUMI_ACCESS_TOKEN,
+        torch_device=args.TORCH_DEVICE,
+        whisper_model=args.WHISPER_MODEL,
+    )
 
-    await translator.translate()
+    sub_zh, sub_bilingual = await translator.get_subtitles()
     if args.OUTPUT_ZH:
-        translator.sub_zh.save(args.OUTPUT_ZH)
+        sub_zh.save(args.OUTPUT_ZH)
     if args.OUTPUT_BILINGUAL:
-        translator.sub_bilingual.save(args.OUTPUT_BILINGUAL)
+        sub_bilingual.save(args.OUTPUT_BILINGUAL)
 
 
 if __name__ == "__main__":
