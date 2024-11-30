@@ -43,15 +43,15 @@ import asyncio
 from yuisub.sub import translate, bilingual, load
 from yuisub.a2t import WhisperModel
 
-# use an asynchronous environment
+# Using an asynchronous environment
 async def main() -> None:
 
-    # sub from audio
-    model = WhisperModel(name="medium", device="cuda")
-    sub = model.transcribe(audio="path/to/audio.mp3")
+    # Using subtitle file input
+    sub = load("path/to/sub.srt")
 
-    # sub from file
-    # sub = load("path/to/sub.srt")
+    # Or using audio input
+    # model = WhisperModel(name="medium", device="cuda")
+    # sub = model.transcribe(audio="path/to/audio.mp3")
 
     # generate bilingual subtitle
     sub_zh = await translate(
@@ -82,15 +82,18 @@ import asyncio
 
 from yuisub.translator import SubtitleTranslator
 
-async def main():
+# Using an asynchronous environment
+async def main() -> None:
+
     translator = await SubtitleTranslator.load_sub(
+
         # Using subtitle file input
         sub_path='path/to/sub.srt',
 
         # Or using audio input
         # audio_path='path/to/audio.mp3',
         # torch_device='cuda',
-        # whisper_model='large-v2',
+        # whisper_model='medium',
 
         model='gpt_model_name',
         api_key='your_openai_api_key',
@@ -103,8 +106,7 @@ async def main():
     sub_zh.save('path/to/output_zh.ass')
     sub_bilingual.save('path/to/output_bilingual.ass')
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
 ```
 
 ### License
