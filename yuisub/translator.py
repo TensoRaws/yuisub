@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 
 import pysubs2
 
@@ -30,14 +30,18 @@ class SubtitleTranslator:
         model: str,
         api_key: str,
         base_url: str,
-        sub_path: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
-        audio_path: Optional[Union[str, Path]] = None,
+        sub: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
+        audio: Optional[Union[str, Any]] = None,
         bangumi_url: Optional[str] = None,
         bangumi_access_token: Optional[str] = None,
         torch_device: Optional[str] = None,
         whisper_model: Optional[str] = None,
     ) -> "SubtitleTranslator":
-        if audio_path:
+        if sub:
+            if isinstance(sub, (str, Path)):
+                sub = load(sub)
+
+        elif audio:
             import torch
 
             from yuisub.a2t import WhisperModel
@@ -55,12 +59,10 @@ class SubtitleTranslator:
                 model_name = "medium" if device == "cpu" else "large-v2"
 
             whisper_model_instance = WhisperModel(name=model_name, device=device)
-            sub = whisper_model_instance.transcribe(audio=str(audio_path))
-        elif sub_path:
-            if isinstance(sub_path, (str, Path)):
-                sub = load(sub_path)
-            elif isinstance(sub_path, pysubs2.SSAFile):
-                sub = sub_path
+            sub = whisper_model_instance.transcribe(audio=audio)
+
+        else:
+            raise ValueError("Either audio or sub must be provided")
 
         return cls(
             sub=sub,

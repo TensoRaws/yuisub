@@ -46,10 +46,10 @@ from yuisub import SubtitleTranslator
 async def main() -> None:
     translator = await SubtitleTranslator.load_sub(
         # Using subtitle file input
-        sub_path='path/to/sub.srt',
+        sub='path/to/sub.srt',
 
         # Or using audio input
-        # audio_path='path/to/audio.mp3',
+        # audio='path/to/audio.mp3',
         # torch_device='cuda',
         # whisper_model='medium',
 

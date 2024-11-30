@@ -36,8 +36,8 @@ async def main() -> None:
         raise ValueError("Please provide output paths for the subtitles.")
 
     translator = await SubtitleTranslator.load_sub(
-        sub_path=args.SUB,
-        audio_path=args.AUDIO,
+        sub=args.SUB,
+        audio=args.AUDIO,
         model=args.OPENAI_MODEL,
         api_key=args.OPENAI_API_KEY,
         base_url=args.OPENAI_BASE_URL,

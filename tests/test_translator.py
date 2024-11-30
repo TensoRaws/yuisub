@@ -10,7 +10,7 @@ from . import util
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 async def test_translator_sub() -> None:
     translator = await SubtitleTranslator.load_sub(
-        sub_path=str(util.TEST_ENG_SRT),
+        sub=str(util.TEST_ENG_SRT),
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
@@ -26,7 +26,7 @@ async def test_translator_sub() -> None:
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 async def test_translator_audio() -> None:
     translator = await SubtitleTranslator.load_sub(
-        audio_path=str(util.TEST_AUDIO),
+        audio=str(util.TEST_AUDIO),
         torch_device=util.DEVICE,
         whisper_model=util.MODEL_NAME,
         model=util.OPENAI_MODEL,
