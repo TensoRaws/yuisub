@@ -46,9 +46,13 @@ class SubtitleTranslator:
             if self.torch_device:
                 device = self.torch_device
             else:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
-                if sys.platform == "darwin":
-                    device = "mps"
+                try:
+                    device = "cuda" if torch.cuda.is_available() else "cpu"
+                    if sys.platform == "darwin":
+                        device = "mps" if torch.backends.mps.is_available() else "cpu"
+                except Exception:
+                    print("torch device failed to auto select, using cpu instead")
+                    device = "cpu"
 
             whisper_model_instance = WhisperModel(name=self.whisper_model, device=device)
             self.whisper_model_instance = whisper_model_instance
