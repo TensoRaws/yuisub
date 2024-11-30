@@ -44,12 +44,8 @@ from yuisub import SubtitleTranslator
 
 # Using an asynchronous environment
 async def main() -> None:
-    translator = await SubtitleTranslator.load_sub(
-        # Using subtitle file input
-        sub='path/to/sub.srt',
-
-        # Or using audio input
-        # audio='path/to/audio.mp3',
+    translator = SubtitleTranslator(
+        # if you wanna use audio input
         # torch_device='cuda',
         # whisper_model='medium',
 
@@ -60,7 +56,7 @@ async def main() -> None:
         bangumi_access_token='your_bangumi_token',
     )
 
-    sub_zh, sub_bilingual = await translator.get_subtitles()
+    sub_zh, sub_bilingual = await translator.get_subtitles(sub='path/to/sub.srt') # Or audio='path/to/audio.mp3',
     sub_zh.save('path/to/output_zh.ass')
     sub_bilingual.save('path/to/output_bilingual.ass')
 
