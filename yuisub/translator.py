@@ -12,16 +12,16 @@ class SubtitleTranslator:
     def __init__(
         self,
         sub: pysubs2.SSAFile,
-        openai_model: str,
-        openai_api_key: str,
-        openai_base_url: str,
+        model: str,
+        api_key: str,
+        base_url: str,
         bangumi_url: Optional[str] = None,
         bangumi_access_token: Optional[str] = None,
     ) -> None:
         self.sub = sub
-        self.openai_model = openai_model
-        self.openai_api_key = openai_api_key
-        self.openai_base_url = openai_base_url
+        self.model = model
+        self.api_key = api_key
+        self.base_url = base_url
         self.bangumi_url = bangumi_url
         self.bangumi_access_token = bangumi_access_token
         self.sub_zh = None
@@ -32,9 +32,9 @@ class SubtitleTranslator:
         cls,
         sub_path: Union[str, Path, pysubs2.SSAFile],
         audio_path: Union[str, Path],
-        openai_model: str,
-        openai_api_key: str,
-        openai_base_url: str,
+        model: str,
+        api_key: str,
+        base_url: str,
         bangumi_url: Optional[str] = None,
         bangumi_access_token: Optional[str] = None,
         torch_device: Optional[str] = None,
@@ -67,9 +67,9 @@ class SubtitleTranslator:
 
         return cls(
             sub=sub,
-            openai_model=openai_model,
-            openai_api_key=openai_api_key,
-            openai_base_url=openai_base_url,
+            model=model,
+            api_key=api_key,
+            base_url=base_url,
             bangumi_url=bangumi_url,
             bangumi_access_token=bangumi_access_token,
         )
@@ -77,9 +77,9 @@ class SubtitleTranslator:
     async def get_subtitles(self) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
         sub_zh = await translate(
             sub=self.sub,
-            model=self.openai_model,
-            api_key=self.openai_api_key,
-            base_url=self.openai_base_url,
+            model=self.model,
+            api_key=self.api_key,
+            base_url=self.base_url,
             bangumi_url=self.bangumi_url,
             bangumi_access_token=self.bangumi_access_token,
             styles=PRESET_STYLES,

@@ -51,7 +51,7 @@ async def main() -> None:
     sub = model.transcribe(audio="path/to/audio.mp3")
 
     # sub from file
-    # sub = load("path/to/input.srt")
+    # sub = load("path/to/sub.srt")
 
     # generate bilingual subtitle
     sub_zh = await translate(
@@ -60,6 +60,7 @@ async def main() -> None:
         api_key="your_openai_api_key",
         base_url="api_url",
         bangumi_url="https://bangumi.tv/subject/424883/"
+        bangumi_access_token='your_bangumi_token'
     )
 
     sub_bilingual = await bilingual(
@@ -68,8 +69,8 @@ async def main() -> None:
     )
 
     # save the ASS files
-    sub_zh.save("path/to/output.zh.ass")
-    sub_bilingual.save("path/to/output.bilingual.ass")
+    sub_zh.save("path/to/output_zh.ass")
+    sub_bilingual.save("path/to/output_bilingual.ass")
 
 asyncio.run(main())
 ```
@@ -84,23 +85,23 @@ from yuisub.translator import SubtitleTranslator
 async def main():
     translator = await SubtitleTranslator.load_sub(
         # Using subtitle file input
-        sub_path='path_to_sub.srt',
+        sub_path='path/to/sub.srt',
 
         # Or using audio input
-        # audio_path='path_to_audio.mkv',
+        # audio_path='path/to/audio.mp3',
         # torch_device='cuda',
         # whisper_model='large-v2',
 
-        openai_model='gpt-4',
-        openai_api_key='my_openai_key',
-        openai_base_url='https://api.openai.com/v1',
-        bangumi_url='https://bangumi.example.com/subject/123',
-        bangumi_access_token='my_bangumi_token'
+        model='gpt_model_name',
+        api_key='your_openai_api_key',
+        base_url='api_url',
+        bangumi_url='https://bangumi.tv/subject/424883/',
+        bangumi_access_token='your_bangumi_token'
     )
 
     sub_zh, sub_bilingual = await translator.get_subtitles()
-    sub_zh.save('output_zh.ass')
-    sub_bilingual.save('output_bilingual.ass')
+    sub_zh.save('path/to/output_zh.ass')
+    sub_bilingual.save('path/to/output_bilingual.ass')
 
 if __name__ == "__main__":
     asyncio.run(main())

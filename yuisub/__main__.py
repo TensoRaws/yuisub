@@ -38,9 +38,9 @@ async def main() -> None:
     translator = await SubtitleTranslator.load_sub(
         sub_path=args.SUB,
         audio_path=args.AUDIO,
-        openai_model=args.OPENAI_MODEL,
-        openai_api_key=args.OPENAI_API_KEY,
-        openai_base_url=args.OPENAI_BASE_URL,
+        model=args.OPENAI_MODEL,
+        api_key=args.OPENAI_API_KEY,
+        base_url=args.OPENAI_BASE_URL,
         bangumi_url=args.BANGUMI_URL,
         bangumi_access_token=args.BANGUMI_ACCESS_TOKEN,
         torch_device=args.TORCH_DEVICE,
