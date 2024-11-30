@@ -59,8 +59,8 @@ async def main() -> None:
         model="gpt_model_name",
         api_key="your_openai_api_key",
         base_url="api_url",
-        bangumi_url="https://bangumi.tv/subject/424883/"
-        bangumi_access_token='your_bangumi_token'
+        bangumi_url="https://bangumi.tv/subject/424883/",
+        bangumi_access_token='your_bangumi_token',
     )
 
     sub_bilingual = await bilingual(
@@ -99,7 +99,7 @@ async def main() -> None:
         api_key='your_openai_api_key',
         base_url='api_url',
         bangumi_url='https://bangumi.tv/subject/424883/',
-        bangumi_access_token='your_bangumi_token'
+        bangumi_access_token='your_bangumi_token',
     )
 
     sub_zh, sub_bilingual = await translator.get_subtitles()

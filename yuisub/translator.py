@@ -4,7 +4,6 @@ from typing import Optional, Tuple, Union
 
 import pysubs2
 
-from yuisub.prompt import PRESET_STYLES
 from yuisub.sub import bilingual, load, translate
 
 
@@ -30,11 +29,11 @@ class SubtitleTranslator:
     @classmethod
     async def load_sub(
         cls,
-        sub_path: Union[str, Path, pysubs2.SSAFile],
-        audio_path: Union[str, Path],
         model: str,
         api_key: str,
         base_url: str,
+        sub_path: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
+        audio_path: Optional[Union[str, Path]] = None,
         bangumi_url: Optional[str] = None,
         bangumi_access_token: Optional[str] = None,
         torch_device: Optional[str] = None,
@@ -82,11 +81,9 @@ class SubtitleTranslator:
             base_url=self.base_url,
             bangumi_url=self.bangumi_url,
             bangumi_access_token=self.bangumi_access_token,
-            styles=PRESET_STYLES,
         )
         sub_bilingual = await bilingual(
             sub_origin=self.sub,
             sub_zh=sub_zh,
-            styles=PRESET_STYLES,
         )
         return sub_zh, sub_bilingual

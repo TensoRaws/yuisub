@@ -65,7 +65,7 @@ async def test_llm_bangumi() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=await bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(url=util.BANGUMI_URL, token=util.BANGUMI_ACCESS_TOKEN),
     )
     print(t.system_prompt)
     res = await t.ask(origin)
@@ -78,7 +78,7 @@ async def test_llm_bangumi_2() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=await bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(url=util.BANGUMI_URL, token=util.BANGUMI_ACCESS_TOKEN),
     )
     print(t.system_prompt)
     s = ORIGIN(
@@ -95,7 +95,7 @@ async def test_llm_summary() -> None:
         model=util.OPENAI_MODEL,
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
-        bangumi_info=await bangumi(util.BANGUMI_URL),
+        bangumi_info=await bangumi(url=util.BANGUMI_URL, token=util.BANGUMI_ACCESS_TOKEN),
     )
     print(t.system_prompt)
     res = await t.ask(summary_origin)
