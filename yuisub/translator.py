@@ -1,10 +1,10 @@
 import sys
 from pathlib import Path
-from typing import Any, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import pysubs2
 
-from yuisub.sub import bilingual, load, translate
+from yuisub.sub import advertisement, bilingual, load, translate
 
 
 class SubtitleTranslator:
@@ -19,15 +19,15 @@ class SubtitleTranslator:
         whisper_model: Optional[str] = None,
     ) -> None:
         """
-        Subtitle Translator
+        Subtitle Translator Class
 
-        :param model:
-        :param api_key:
-        :param base_url:
-        :param bangumi_url:
-        :param bangumi_access_token:
-        :param torch_device:
-        :param whisper_model:
+        :param model: llm model name
+        :param api_key: llm api key
+        :param base_url: llm base url
+        :param bangumi_url: bangumi url
+        :param bangumi_access_token: bangumi access token
+        :param torch_device: torch device
+        :param whisper_model: whisper model name
         """
         self.model = model
         self.api_key = api_key
@@ -54,13 +54,19 @@ class SubtitleTranslator:
             self.whisper_model_instance = whisper_model_instance
 
     async def get_subtitles(
-        self, sub: Optional[Union[str, Path, pysubs2.SSAFile]] = None, audio: Optional[Union[str, Any]] = None
+        self,
+        sub: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
+        audio: Optional[Union[str, Any]] = None,
+        styles: Optional[Dict[str, pysubs2.SSAStyle]] = None,
+        ad: Optional[pysubs2.SSAEvent] = advertisement(),  # noqa: B008
     ) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
         """
         Get Subtitles from sub or audio
 
-        :param sub:
-        :param audio:
+        :param sub: subtitle file path or pysubs2.SSAFile
+        :param audio: audio file path or numpy array or torch tensor
+        :param styles: subtitle styles, default is PRESET_STYLES
+        :param ad: ad: add advertisement to subtitle, default is TensoRaws
         :return: ZH Subtitles and Bilingual Subtitles
         """
 
@@ -83,6 +89,8 @@ class SubtitleTranslator:
             base_url=self.base_url,
             bangumi_url=self.bangumi_url,
             bangumi_access_token=self.bangumi_access_token,
+            styles=styles,
+            ad=ad,
         )
         sub_bilingual = await bilingual(
             sub_origin=sub,

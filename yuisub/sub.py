@@ -112,8 +112,8 @@ async def translate(
         base_url=base_url,
         bangumi_info=bangumi_info,
     )
+    print(summarizer.system_prompt)
 
-    print("Summarizing...")
     # get summary
     summary = await summarizer.ask(ORIGIN(origin="\n".join(trans_list)))
 
