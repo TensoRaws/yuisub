@@ -1,14 +1,12 @@
 import os
 from pathlib import Path
 
-import torch
-
 projectPATH = Path(__file__).resolve().parent.parent.absolute()
 
 TEST_AUDIO = projectPATH / "assets" / "test.mp3"
 TEST_ENG_SRT = projectPATH / "assets" / "eng.srt"
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu" if os.environ.get("GITHUB_ACTIONS") == "true" else None
 MODEL_NAME = "medium" if DEVICE == "cuda" else "tiny"
 
 BANGUMI_URL = "https://bangumi.tv/subject/424883"
