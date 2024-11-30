@@ -61,7 +61,7 @@ class SubtitleTranslator:
         ad: Optional[pysubs2.SSAEvent] = advertisement(),  # noqa: B008
     ) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
         """
-        Get Subtitles from sub or audio
+        Get Translated Subtitles and Bilingual Subtitles from Subtitle or Audio
 
         :param sub: subtitle file path or pysubs2.SSAFile
         :param audio: audio file path or numpy array or torch tensor
