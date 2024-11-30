@@ -2,9 +2,10 @@ import os
 
 import pytest
 
-from tests import util
 from yuisub.a2t import WhisperModel
 from yuisub.sub import bilingual, load, translate
+
+from . import util
 
 
 def test_sub() -> None:

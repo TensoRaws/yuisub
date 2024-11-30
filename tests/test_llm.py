@@ -2,8 +2,9 @@ import os
 
 import pytest
 
-from tests import util
 from yuisub import ORIGIN, Summarizer, Translator, bangumi
+
+from . import util
 
 origin = ORIGIN(
     origin="何だよ…けっこう多いじゃねぇか",

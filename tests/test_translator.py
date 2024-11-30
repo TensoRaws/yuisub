@@ -2,8 +2,9 @@ import os
 
 import pytest
 
-from tests import util
 from yuisub.translator import SubtitleTranslator
+
+from . import util
 
 
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")

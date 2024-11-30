@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from yuisub.translator import SubtitleTranslator
+from yuisub import SubtitleTranslator
 
 parser = argparse.ArgumentParser(description="Generate Bilingual Subtitle from audio or subtitle file")
 

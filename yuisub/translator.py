@@ -23,8 +23,6 @@ class SubtitleTranslator:
         self.base_url = base_url
         self.bangumi_url = bangumi_url
         self.bangumi_access_token = bangumi_access_token
-        self.sub_zh = None
-        self.sub_bilingual = None
 
     @classmethod
     async def load_sub(
