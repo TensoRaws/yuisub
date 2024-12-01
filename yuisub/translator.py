@@ -1,89 +1,103 @@
 import sys
 from pathlib import Path
-from typing import Optional, Tuple, Union
+from typing import Any, Dict, Optional, Tuple, Union
 
 import pysubs2
 
-from yuisub.sub import bilingual, load, translate
+from yuisub.sub import advertisement, bilingual, load, translate
 
 
 class SubtitleTranslator:
     def __init__(
         self,
-        sub: pysubs2.SSAFile,
         model: str,
         api_key: str,
         base_url: str,
         bangumi_url: Optional[str] = None,
         bangumi_access_token: Optional[str] = None,
+        torch_device: Optional[str] = None,
+        whisper_model: Optional[str] = None,
     ) -> None:
-        self.sub = sub
+        """
+        Subtitle Translator Class
+
+        :param model: llm model name
+        :param api_key: llm api key
+        :param base_url: llm base url
+        :param bangumi_url: bangumi url
+        :param bangumi_access_token: bangumi access token
+        :param torch_device: torch device
+        :param whisper_model: whisper model name
+        """
         self.model = model
         self.api_key = api_key
         self.base_url = base_url
         self.bangumi_url = bangumi_url
         self.bangumi_access_token = bangumi_access_token
-        self.sub_zh = None
-        self.sub_bilingual = None
+        self.torch_device = torch_device
+        self.whisper_model = whisper_model
+        self.whisper_model_instance = None
 
-    @classmethod
-    async def load_sub(
-        cls,
-        model: str,
-        api_key: str,
-        base_url: str,
-        sub_path: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
-        audio_path: Optional[Union[str, Path]] = None,
-        bangumi_url: Optional[str] = None,
-        bangumi_access_token: Optional[str] = None,
-        torch_device: Optional[str] = None,
-        whisper_model: Optional[str] = None,
-    ) -> "SubtitleTranslator":
-        if audio_path:
+        if self.whisper_model:
             import torch
 
             from yuisub.a2t import WhisperModel
 
-            if torch_device:
-                device = torch_device
+            if self.torch_device:
+                device = self.torch_device
             else:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
-                if sys.platform == "darwin":
-                    device = "mps"
+                try:
+                    device = "cuda" if torch.cuda.is_available() else "cpu"
+                    if sys.platform == "darwin":
+                        device = "mps" if torch.backends.mps.is_available() else "cpu"
+                except Exception:
+                    print("torch device failed to auto select, using cpu instead")
+                    device = "cpu"
 
-            if whisper_model:
-                model_name = whisper_model
-            else:
-                model_name = "medium" if device == "cpu" else "large-v2"
+            whisper_model_instance = WhisperModel(name=self.whisper_model, device=device)
+            self.whisper_model_instance = whisper_model_instance
 
-            whisper_model_instance = WhisperModel(name=model_name, device=device)
-            sub = whisper_model_instance.transcribe(audio=str(audio_path))
-        elif sub_path:
-            if isinstance(sub_path, (str, Path)):
-                sub = load(sub_path)
-            elif isinstance(sub_path, pysubs2.SSAFile):
-                sub = sub_path
+    async def get_subtitles(
+        self,
+        sub: Optional[Union[str, Path, pysubs2.SSAFile]] = None,
+        audio: Optional[Union[str, Any]] = None,
+        styles: Optional[Dict[str, pysubs2.SSAStyle]] = None,
+        ad: Optional[pysubs2.SSAEvent] = advertisement(),  # noqa: B008
+    ) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
+        """
+        Get Translated Subtitles and Bilingual Subtitles from Subtitle or Audio
 
-        return cls(
-            sub=sub,
-            model=model,
-            api_key=api_key,
-            base_url=base_url,
-            bangumi_url=bangumi_url,
-            bangumi_access_token=bangumi_access_token,
-        )
+        :param sub: subtitle file path or pysubs2.SSAFile
+        :param audio: audio file path or numpy array or torch tensor
+        :param styles: subtitle styles, default is PRESET_STYLES
+        :param ad: ad: add advertisement to subtitle, default is TensoRaws
+        :return: ZH Subtitles and Bilingual Subtitles
+        """
 
-    async def get_subtitles(self) -> Tuple[pysubs2.SSAFile, pysubs2.SSAFile]:
+        if sub:
+            if isinstance(sub, (str, Path)):
+                sub = load(sub)
+
+        elif audio:
+            if not self.whisper_model_instance:
+                raise ValueError("Whisper model is not loaded, please initialize it first")
+            sub = self.whisper_model_instance.transcribe(audio=audio)
+
+        else:
+            raise ValueError("Either audio or sub must be provided")
+
         sub_zh = await translate(
-            sub=self.sub,
+            sub=sub,
             model=self.model,
             api_key=self.api_key,
             base_url=self.base_url,
             bangumi_url=self.bangumi_url,
             bangumi_access_token=self.bangumi_access_token,
+            styles=styles,
+            ad=ad,
         )
         sub_bilingual = await bilingual(
-            sub_origin=self.sub,
+            sub_origin=sub,
             sub_zh=sub_zh,
         )
         return sub_zh, sub_bilingual

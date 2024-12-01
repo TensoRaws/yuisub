@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from yuisub.translator import SubtitleTranslator
+from yuisub import SubtitleTranslator
 
 parser = argparse.ArgumentParser(description="Generate Bilingual Subtitle from audio or subtitle file")
 
@@ -35,9 +35,7 @@ async def main() -> None:
     if not args.OUTPUT_ZH and not args.OUTPUT_BILINGUAL:
         raise ValueError("Please provide output paths for the subtitles.")
 
-    translator = await SubtitleTranslator.load_sub(
-        sub_path=args.SUB,
-        audio_path=args.AUDIO,
+    translator = SubtitleTranslator(
         model=args.OPENAI_MODEL,
         api_key=args.OPENAI_API_KEY,
         base_url=args.OPENAI_BASE_URL,
@@ -47,7 +45,10 @@ async def main() -> None:
         whisper_model=args.WHISPER_MODEL,
     )
 
-    sub_zh, sub_bilingual = await translator.get_subtitles()
+    sub_zh, sub_bilingual = await translator.get_subtitles(
+        sub=args.SUB,
+        audio=args.AUDIO,
+    )
     if args.OUTPUT_ZH:
         sub_zh.save(args.OUTPUT_ZH)
     if args.OUTPUT_BILINGUAL:

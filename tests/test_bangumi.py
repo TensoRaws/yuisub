@@ -1,5 +1,6 @@
-from tests import util
 from yuisub import bangumi
+
+from . import util
 
 
 async def test_bangumi() -> None:

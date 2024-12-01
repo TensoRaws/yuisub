@@ -40,58 +40,12 @@ yuisub -h  # Displays help message
 ```python3
 import asyncio
 
-from yuisub.sub import translate, bilingual, load
-from yuisub.a2t import WhisperModel
+from yuisub import SubtitleTranslator
 
 # Using an asynchronous environment
 async def main() -> None:
-
-    # Using subtitle file input
-    sub = load("path/to/sub.srt")
-
-    # Or using audio input
-    # model = WhisperModel(name="medium", device="cuda")
-    # sub = model.transcribe(audio="path/to/audio.mp3")
-
-    # generate bilingual subtitle
-    sub_zh = await translate(
-        sub=sub,
-        model="gpt_model_name",
-        api_key="your_openai_api_key",
-        base_url="api_url",
-        bangumi_url="https://bangumi.tv/subject/424883/",
-        bangumi_access_token='your_bangumi_token',
-    )
-
-    sub_bilingual = await bilingual(
-        sub_origin=sub,
-        sub_zh=sub_zh
-    )
-
-    # save the ASS files
-    sub_zh.save("path/to/output_zh.ass")
-    sub_bilingual.save("path/to/output_bilingual.ass")
-
-asyncio.run(main())
-```
-
-Here is a complete example of how to use the SubtitleTranslator class in a script:
-
-```python3
-import asyncio
-
-from yuisub.translator import SubtitleTranslator
-
-# Using an asynchronous environment
-async def main() -> None:
-
-    translator = await SubtitleTranslator.load_sub(
-
-        # Using subtitle file input
-        sub_path='path/to/sub.srt',
-
-        # Or using audio input
-        # audio_path='path/to/audio.mp3',
+    translator = SubtitleTranslator(
+        # if you wanna use audio input
         # torch_device='cuda',
         # whisper_model='medium',
 
@@ -102,7 +56,7 @@ async def main() -> None:
         bangumi_access_token='your_bangumi_token',
     )
 
-    sub_zh, sub_bilingual = await translator.get_subtitles()
+    sub_zh, sub_bilingual = await translator.get_subtitles(sub='path/to/sub.srt') # Or audio='path/to/audio.mp3',
     sub_zh.save('path/to/output_zh.ass')
     sub_bilingual.save('path/to/output_bilingual.ass')
 
