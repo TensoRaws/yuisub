@@ -35,8 +35,6 @@ yuisub -h  # Displays help message
 
 `yuisub` can also be used as a library
 
-### Example
-
 ```python3
 import asyncio
 
@@ -65,5 +63,5 @@ asyncio.run(main())
 
 ### License
 
-This project is licensed under the BSD 3-Clause - see
+This project is licensed under the GPL-3.0 license - see
 the [LICENSE file](https://github.com/TohruskyDev/yuisub/blob/main/LICENSE) for details.
