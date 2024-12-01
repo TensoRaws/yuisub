@@ -2,7 +2,7 @@
 
 [![codecov](https://codecov.io/gh/TensoRaws/yuisub/branch/main/graph/badge.svg?token=B2TNKYN4O4)](https://codecov.io/gh/TensoRaws/yuisub)
 [![CI-test](https://github.com/TensoRaws/yuisub/actions/workflows/CI-test.yml/badge.svg)](https://github.com/TensoRaws/yuisub/actions/workflows/CI-test.yml)
-[![Release-pypi](https://github.com/TensoRaws/yuisub/actions/workflows/Release-pypi.yml/badge.svg)](https://github.com/TensoRaws/yuisub/actions/workflows/Release-pypi.yml)
+[![Release](https://github.com/TensoRaws/yuisub/actions/workflows/Release.yml/badge.svg)](https://github.com/TensoRaws/yuisub/actions/workflows/Release.yml)
 [![PyPI version](https://badge.fury.io/py/yuisub.svg)](https://badge.fury.io/py/yuisub)
 ![GitHub](https://img.shields.io/github/license/TensoRaws/yuisub)
 
