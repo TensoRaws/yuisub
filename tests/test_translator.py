@@ -7,6 +7,24 @@ from yuisub.translator import SubtitleTranslator
 from . import util
 
 
+def test_translator_sub_init() -> None:
+    translator = SubtitleTranslator(
+        torch_device=util.DEVICE,
+        whisper_model=util.MODEL_NAME,
+        model=util.OPENAI_MODEL,
+        api_key=util.OPENAI_API_KEY,
+        base_url=util.OPENAI_BASE_URL,
+        bangumi_url=util.BANGUMI_URL,
+        bangumi_access_token=util.BANGUMI_ACCESS_TOKEN,
+    )
+
+    assert translator.model == util.OPENAI_MODEL
+    assert translator.api_key == util.OPENAI_API_KEY
+    assert translator.base_url == util.OPENAI_BASE_URL
+    assert translator.bangumi_url == util.BANGUMI_URL
+    assert translator.bangumi_access_token == util.BANGUMI_ACCESS_TOKEN
+
+
 @pytest.mark.skipif(os.environ.get("GITHUB_ACTIONS") == "true", reason="Skipping test when running on CI")
 async def test_translator_sub() -> None:
     translator = SubtitleTranslator(
