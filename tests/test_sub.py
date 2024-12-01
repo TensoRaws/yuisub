@@ -2,9 +2,10 @@ import os
 
 import pytest
 
-from tests import util
 from yuisub.a2t import WhisperModel
 from yuisub.sub import bilingual, load, translate
+
+from . import util
 
 
 def test_sub() -> None:
@@ -34,6 +35,7 @@ async def test_bilingual_2() -> None:
         api_key=util.OPENAI_API_KEY,
         base_url=util.OPENAI_BASE_URL,
         bangumi_url=util.BANGUMI_URL,
+        bangumi_access_token=util.BANGUMI_ACCESS_TOKEN,
     )
     sub_bilingual = await bilingual(sub_origin=sub, sub_zh=sub_zh)
 

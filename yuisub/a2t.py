@@ -9,7 +9,11 @@ from pysubs2 import SSAFile
 
 class WhisperModel:
     def __init__(
-        self, name: str = "medium", device: str = "cuda", download_root: Optional[str] = None, in_memory: bool = False
+        self,
+        name: str = "medium",
+        device: Optional[Union[str, torch.device]] = None,
+        download_root: Optional[str] = None,
+        in_memory: bool = False,
     ):
         self.model = whisper.load_model(name=name, device=device, download_root=download_root, in_memory=in_memory)
 

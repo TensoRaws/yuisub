@@ -1,5 +1,7 @@
 from yuisub import bangumi
 
+from . import util
+
 
 async def test_bangumi() -> None:
     url_list = [
@@ -9,6 +11,6 @@ async def test_bangumi() -> None:
     ]
 
     for url in url_list:
-        r = await bangumi(url)
+        r = await bangumi(url=url, token=util.BANGUMI_ACCESS_TOKEN)
         print(r.introduction)
         print(r.characters)
