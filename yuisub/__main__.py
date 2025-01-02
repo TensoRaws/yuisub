@@ -25,7 +25,7 @@ parser.add_argument("-wm", "--WHISPER_MODEL", type=str, help="Whisper model to u
 args = parser.parse_args()
 
 
-async def main() -> None:
+async def _main() -> None:
     if args.AUDIO and args.SUB:
         raise ValueError("Please provide only one input file, either audio or subtitle file")
 
@@ -55,5 +55,9 @@ async def main() -> None:
         sub_bilingual.save(args.OUTPUT_BILINGUAL)
 
 
+def main() -> None:
+    asyncio.run(_main())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
