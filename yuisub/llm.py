@@ -54,8 +54,8 @@ class Translator:
             raise e
 
         except Exception as e:
-            print(f"Unknown Error: {e} return original question: {question.origin}")
-            return ZH(zh=question.origin)
+            print(f"Unknown Error: {e} return original question: {question}")
+            return ZH(zh=question)
 
         return zh
 
