@@ -5,10 +5,6 @@ from pydantic import BaseModel
 from yuisub.bangumi import BGM
 
 
-class ORIGIN(BaseModel):
-    origin: str
-
-
 class ZH(BaseModel):
     zh: str
 

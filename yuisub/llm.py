@@ -5,7 +5,7 @@ from openai import AsyncOpenAI
 from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.bangumi import BGM
-from yuisub.prompt import ORIGIN, ZH, anime_prompt, summary_prompt
+from yuisub.prompt import ZH, anime_prompt, summary_prompt
 
 
 class Translator:
@@ -21,19 +21,19 @@ class Translator:
         self.corner_case = True
 
     @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
-    async def ask(self, question: ORIGIN) -> ZH:
+    async def ask(self, question: str) -> ZH:
         if self.corner_case:
             # blank question
-            if question.origin == "":
+            if question == "":
                 return ZH(zh="")
 
             # too long question, return directly
-            if len(question.origin) > 100:
-                return ZH(zh=question.origin)
+            if len(question) > 100:
+                return ZH(zh=question)
 
         messages = [
             {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": question.origin},
+            {"role": "user", "content": question},
         ]
 
         try:
