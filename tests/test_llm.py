@@ -2,16 +2,13 @@ import os
 
 import pytest
 
-from yuisub import ORIGIN, Summarizer, Translator, bangumi
+from yuisub import Summarizer, Translator, bangumi
 
 from . import util
 
-origin = ORIGIN(
-    origin="何だよ…けっこう多いじゃねぇか",
-)
+origin = "何だよ…けっこう多いじゃねぇか"
 
-summary_origin = ORIGIN(
-    origin="""
+summary_origin = """
 May I ask your name, miss?
 Seriously, you stop that right now!
 Uh... your grandfather seems very spry.
@@ -38,13 +35,12 @@ Quiet, Mom.
 We'll be going now.
 Thank you for your time.
 """
-)
 
 
 async def test_llm_none() -> None:
     t = Translator(model=util.OPENAI_MODEL, api_key=util.OPENAI_API_KEY, base_url=util.OPENAI_BASE_URL)
     print(t.system_prompt)
-    res = await t.ask(ORIGIN(origin=""))
+    res = await t.ask("")
     assert res.zh == ""
 
 
@@ -82,9 +78,7 @@ async def test_llm_bangumi_2() -> None:
         bangumi_info=await bangumi(url=util.BANGUMI_URL, token=util.BANGUMI_ACCESS_TOKEN),
     )
     print(t.system_prompt)
-    s = ORIGIN(
-        origin="♪ 星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と",
-    )
+    s = "♪ 星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と星と"
 
     res = await t.ask(s)
     print(res.zh)
