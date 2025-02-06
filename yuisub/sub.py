@@ -9,7 +9,6 @@ from tenacity import retry, stop_after_attempt, wait_random
 
 from yuisub.bangumi import bangumi
 from yuisub.llm import Summarizer, Translator
-from yuisub.prompt import ORIGIN
 
 PRESET_STYLES: dict[str, SSAStyle] = {
     "zh": SSAStyle(
@@ -115,7 +114,7 @@ async def translate(
     print(summarizer.system_prompt)
 
     # get summary
-    summary = await summarizer.ask(ORIGIN(origin="\n".join(trans_list)))
+    summary = await summarizer.ask("\n".join(trans_list))
 
     # initialize translator
     translator = Translator(
@@ -130,7 +129,7 @@ async def translate(
     # create translate text task
     async def _translate(index: int) -> None:
         nonlocal trans_list
-        translated_text = await translator.ask(ORIGIN(origin=trans_list[index]))
+        translated_text = await translator.ask(trans_list[index])
         print(f"Translated: {trans_list[index]} ---> {translated_text.zh}")
         trans_list[index] = translated_text.zh
 
