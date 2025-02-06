@@ -17,7 +17,7 @@ class Translator:
             api_key=api_key,
             base_url=base_url,
         )
-        self.system_prompt = anime_prompt(bangumi_info, summary)
+        self.system_prompt, self.example_input, self.example_output = anime_prompt(bangumi_info, summary)
         self.corner_case = True
 
     @retry(wait=wait_random(min=3, max=5), stop=stop_after_attempt(5))
@@ -33,6 +33,8 @@ class Translator:
 
         messages = [
             {"role": "system", "content": self.system_prompt},
+            {"role": "user", "content": self.example_input},
+            {"role": "assistant", "content": self.example_output},
             {"role": "user", "content": question},
         ]
 
@@ -63,5 +65,5 @@ class Translator:
 class Summarizer(Translator):
     def __init__(self, model: str, api_key: str, base_url: str, bangumi_info: Optional[BGM] = None) -> None:
         super().__init__(model, api_key, base_url, bangumi_info)
-        self.system_prompt = summary_prompt(bangumi_info)
+        self.system_prompt, self.example_input, self.example_output = summary_prompt(bangumi_info)
         self.corner_case = False
