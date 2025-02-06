@@ -1,4 +1,3 @@
-import json
 from typing import Optional
 
 import openai
@@ -34,15 +33,17 @@ class Translator:
 
         messages = [
             {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": question.model_dump_json()},
+            {"role": "user", "content": question.origin},
         ]
 
         try:
             response = await self.client.chat.completions.create(
-                model=self.model, messages=messages, response_format={"type": "json_object"}
+                model=self.model,
+                messages=messages,
             )
-            content = json.loads(response.choices[0].message.content)
-            zh = ZH(**content)
+
+            zh_text = response.choices[0].message.content
+            zh = ZH(zh=zh_text.strip())
 
         except openai.AuthenticationError as e:
             print(f"Authentication Error: {e} retrying...")

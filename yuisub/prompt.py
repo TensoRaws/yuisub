@@ -38,14 +38,10 @@ def anime_prompt(bangumi_info: Optional[BGM] = None, summary: str = "") -> str:
         + """
 
 EXAMPLE INPUT:
-{
-    "origin": "止まるんじゃねぇぞ！"
-}
+止まるんじゃねぇぞ！
 
-EXAMPLE JSON OUTPUT:
-{
-    "zh": "不要停下来啊！"
-}
+EXAMPLE OUTPUT:
+不要停下来啊！
 """
     )
 
@@ -76,13 +72,9 @@ def summary_prompt(bangumi_info: Optional[BGM] = None) -> str:
         + """
 
 EXAMPLE INPUT:
-{
-    "origin": "It is... How do you know that? I think you mentioned it in your introduction when you transferred in. Anyway, that's not important. My birthday is April 9th. I've already turned sixteen. I've already turned sixteen. Anyway, thanks for checking in, Alya. See you tomorrow."
-}
+It is... How do you know that? I think you mentioned it in your introduction when you transferred in. Anyway, that's not important. My birthday is April 9th. I've already turned sixteen. I've already turned sixteen. Anyway, thanks for checking in, Alya. See you tomorrow.
 
-EXAMPLE JSON OUTPUT:
-{
-    "zh": "在这部动漫新番中，主角久世政近的邻座是一个名叫艾莉莎的女孩。艾莉莎通常对政近表现出冷漠的态度，但有时她会用俄语小声地向他撒娇。政近实际上拥有母语级别的俄语听力，能够理解艾莉莎的话，但他选择装作听不懂。艾莉莎误以为政近不懂俄语，所以她才会在他面前展示出她真实的一面。两人之间有着一种甜蜜的氛围，但他们都试图隐藏这一点。在对话中，艾莉莎纠正了政近关于她生日的错误认知，告诉他她的生日是4月9日，并且她已经16岁了。这段对话增加了他们之间的亲密感，让人对他们的关系发展充满期待。"
-}
+EXAMPLE OUTPUT:
+在这部动漫新番中，主角久世政近的邻座是一个名叫艾莉莎的女孩。艾莉莎通常对政近表现出冷漠的态度，但有时她会用俄语小声地向他撒娇。政近实际上拥有母语级别的俄语听力，能够理解艾莉莎的话，但他选择装作听不懂。艾莉莎误以为政近不懂俄语，所以她才会在他面前展示出她真实的一面。两人之间有着一种甜蜜的氛围，但他们都试图隐藏这一点。在对话中，艾莉莎纠正了政近关于她生日的错误认知，告诉他她的生日是4月9日，并且她已经16岁了。这段对话增加了他们之间的亲密感，让人对他们的关系发展充满期待。
 """
     )
