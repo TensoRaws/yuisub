@@ -22,7 +22,7 @@ jobs:
   CI:
     strategy:
       matrix:
-        os-version: ["ubuntu-20.04", "windows-latest", "macos-14"]
+        os-version: ["ubuntu-latest", "windows-latest", "macos-latest"]
         python-version: ["3.9"]
         poetry-version: ["1.8.3"]
 
@@ -52,7 +52,7 @@ jobs:
           make test
 
       - name: Codecov
-        if: matrix.os-version == 'ubuntu-20.04'
+        if: matrix.os-version == 'ubuntu-latest'
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
